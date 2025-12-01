@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Study Buddy - Progress</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
+        <p>Your Ultimate Companion for Medical Exam Success</p>
+        <p>Made with <i class="fas fa-heart"></i> by S</p>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <a href="index.html" class="nav-tab" data-page="dashboard">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="timer.html" class="nav-tab" data-page="timer">
+          <i class="fas fa-clock"></i> Study Timer
+        </a>
+        <a href="modules.html" class="nav-tab" data-page="modules">
+          <i class="fas fa-book-medical"></i> Modules
+        </a>
+        <a href="flashcards.html" class="nav-tab" data-page="flashcards">
+          <i class="fas fa-layer-group"></i> Flashcards
+        </a>
+        <a href="progress.html" class="nav-tab active" data-page="progress">
+          <i class="fas fa-chart-line"></i> Progress
+        </a>
+      </div>
+
+      <!-- Progress Section -->
+      <div class="content-section active">
+        <div class="section-header">
+          <h2><i class="fas fa-chart-line"></i> Study Progress</h2>
+          <button class="btn btn-danger" onclick="resetAllData()">
+            <i class="fas fa-trash"></i> Reset All Data
+          </button>
+        </div>
+
+        <!-- Overview Stats -->
+        <div class="progress-overview">
+          <h3><i class="fas fa-chart-bar"></i> Overall Statistics</h3>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <i class="fas fa-clock"></i>
+              <h3 id="totalTime">0h 0m</h3>
+              <p>Total Study Time</p>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-book-medical"></i>
+              <h3 id="totalModules">0</h3>
+              <p>Modules Created</p>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-layer-group"></i>
+              <h3 id="totalCards">0</h3>
+              <p>Total Flashcards</p>
+            </div>
+            <div class="stat-card">
+              <i class="fas fa-fire"></i>
+              <h3 id="studyStreak">0</h3>
+              <p>Day Streak</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Module Breakdown -->
+        <div class="progress-section">
+          <h3><i class="fas fa-book-medical"></i> Module Breakdown</h3>
+          <div id="moduleBreakdown" class="module-breakdown">
+            <div class="empty-state">
+              <i class="fas fa-book-medical"></i>
+              <h3>No Modules Yet</h3>
+              <p>Create modules to see detailed progress</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Study Timer History -->
+        <div class="progress-section">
+          <h3><i class="fas fa-clock"></i> Study Session History</h3>
+          <div class="timer-history">
+            <div class="history-item">
+              <div class="history-label">Today's Sessions</div>
+              <div class="history-value" id="todaySessions">0</div>
+            </div>
+            <div class="history-item">
+              <div class="history-label">Today's Study Time</div>
+              <div class="history-value" id="todayStudyTime">0h 0m</div>
+            </div>
+            <div class="history-item">
+              <div class="history-label">Current Streak</div>
+              <div class="history-value" id="currentStreak">0 days</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Achievement Badges -->
+        <div class="progress-section">
+          <h3><i class="fas fa-trophy"></i> Achievements</h3>
+          <div class="achievements-grid">
+            <div class="achievement-badge" id="badge1">
+              <i class="fas fa-star"></i>
+              <h4>First Module</h4>
+              <p>Create your first study module</p>
+            </div>
+            <div class="achievement-badge" id="badge2">
+              <i class="fas fa-layer-group"></i>
+              <h4>Flashcard Master</h4>
+              <p>Create 50 flashcards</p>
+            </div>
+            <div class="achievement-badge" id="badge3">
+              <i class="fas fa-fire"></i>
+              <h4>7-Day Streak</h4>
+              <p>Study for 7 consecutive days</p>
+            </div>
+            <div class="achievement-badge" id="badge4">
+              <i class="fas fa-clock"></i>
+              <h4>Dedicated Learner</h4>
+              <p>Study for 10 hours total</p>
+            </div>
+            <div class="achievement-badge" id="badge5">
+              <i class="fas fa-graduation-cap"></i>
+              <h4>Module Pro</h4>
+              <p>Create 5 modules</p>
+            </div>
+            <div class="achievement-badge" id="badge6">
+              <i class="fas fa-brain"></i>
+              <h4>Pomodoro Champion</h4>
+              <p>Complete 100 study sessions</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Study Smart, Not Just Hard
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Set active navigation
+      setActiveNav("progress");
+
+      function loadProgressData() {
+        const modules = getModules();
+        const stats = JSON.parse(localStorage.getItem("medStudyStats")) || {
+          totalStudyTime: 0,
+          totalFlashcards: 0,
+          quizzesTaken: 0,
+          totalScore: 0,
+        };
+        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+          sessionsToday: 0,
+          totalTimeToday: 0,
+          currentStreak: 0,
+          lastDate: new Date().toDateString(),
+        };
+
+        // Update overall stats
+        const hours = Math.floor(stats.totalStudyTime / 60);
+        const minutes = stats.totalStudyTime % 60;
+        document.getElementById("totalTime").textContent = `${hours}h ${minutes}m`;
+        document.getElementById("totalModules").textContent = modules.length;
+        document.getElementById("totalCards").textContent = stats.totalFlashcards;
+        document.getElementById("studyStreak").textContent = timerStats.currentStreak;
+
+        // Update timer history
+        document.getElementById("todaySessions").textContent = timerStats.sessionsToday;
+        const todayHours = Math.floor(timerStats.totalTimeToday / 60);
+        const todayMinutes = timerStats.totalTimeToday % 60;
+        document.getElementById("todayStudyTime").textContent = `${todayHours}h ${todayMinutes}m`;
+        document.getElementById("currentStreak").textContent = `${timerStats.currentStreak} days`;
+
+        // Load module breakdown
+        loadModuleBreakdown(modules);
+
+        // Check achievements
+        checkAchievements(modules, stats, timerStats);
+      }
+
+      function loadModuleBreakdown(modules) {
+        const container = document.getElementById("moduleBreakdown");
+
+        if (modules.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-book-medical"></i>
+              <h3>No Modules Yet</h3>
+              <p>Create modules to see detailed progress</p>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = modules.map(module => `
+          <div class="module-progress-card" style="border-left: 4px solid ${module.color}">
+            <div class="module-progress-header">
+              <h4 style="color: ${module.color}">${module.name}</h4>
+              <span class="module-date">${new Date(module.createdAt).toLocaleDateString()}</span>
+            </div>
+            <div class="module-progress-stats">
+              <div class="progress-stat">
+                <i class="fas fa-sticky-note"></i>
+                <span>${module.notes.length} Notes</span>
+              </div>
+              <div class="progress-stat">
+                <i class="fas fa-layer-group"></i>
+                <span>${module.flashcards.length} Flashcards</span>
+              </div>
+              <div class="progress-stat">
+                <i class="fas fa-question-circle"></i>
+                <span>${module.quizQuestions.length} Quiz Questions</span>
+              </div>
+            </div>
+          </div>
+        `).join("");
+      }
+
+      function checkAchievements(modules, stats, timerStats) {
+        // Badge 1: First Module
+        if (modules.length >= 1) {
+          document.getElementById("badge1").classList.add("unlocked");
+        }
+
+        // Badge 2: 50 Flashcards
+        if (stats.totalFlashcards >= 50) {
+          document.getElementById("badge2").classList.add("unlocked");
+        }
+
+        // Badge 3: 7-Day Streak
+        if (timerStats.currentStreak >= 7) {
+          document.getElementById("badge3").classList.add("unlocked");
+        }
+
+        // Badge 4: 10 Hours Total
+        if (stats.totalStudyTime >= 600) {
+          document.getElementById("badge4").classList.add("unlocked");
+        }
+
+        // Badge 5: 5 Modules
+        if (modules.length >= 5) {
+          document.getElementById("badge5").classList.add("unlocked");
+        }
+
+        // Badge 6: 100 Sessions
+        if (timerStats.sessionsToday >= 100) {
+          document.getElementById("badge6").classList.add("unlocked");
+        }
+      }
+
+      function resetAllData() {
+        if (!confirm("⚠️ WARNING: This will delete ALL your data including modules, flashcards, notes, quiz questions, and progress. This action cannot be undone!\n\nAre you absolutely sure?")) {
+          return;
+        }
+
+        if (!confirm("Final confirmation: Delete everything?")) {
+          return;
+        }
+
+        // Clear all data
+        localStorage.removeItem("medStudyModules");
+        localStorage.removeItem("medStudyStats");
+        localStorage.removeItem("timerStats");
+        localStorage.removeItem("timerSettings");
+
+        alert("All data has been reset!");
+        location.reload();
+      }
+
+      // Load data on page load
+      document.addEventListener("DOMContentLoaded", function() {
+        loadProgressData();
+      });
+    </script>
+  </body>
+</html>
+

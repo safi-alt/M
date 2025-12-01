@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Study Buddy - Study Timer</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
+        <p>Your Ultimate Companion for Medical Exam Success</p>
+        <p>Made with <i class="fas fa-heart"></i> by S</p>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <a href="index.html" class="nav-tab" data-page="dashboard">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="timer.html" class="nav-tab active" data-page="timer">
+          <i class="fas fa-clock"></i> Study Timer
+        </a>
+        <a href="modules.html" class="nav-tab" data-page="modules">
+          <i class="fas fa-book-medical"></i> Modules
+        </a>
+        <a href="flashcards.html" class="nav-tab" data-page="flashcards">
+          <i class="fas fa-layer-group"></i> Flashcards
+        </a>
+        <a href="progress.html" class="nav-tab" data-page="progress">
+          <i class="fas fa-chart-line"></i> Progress
+        </a>
+      </div>
+
+      <!-- Study Timer Section -->
+      <div class="content-section active">
+        <div class="section-header">
+          <h2><i class="fas fa-clock"></i> Pomodoro Study Timer</h2>
+        </div>
+        <p style="color: var(--gray); margin-bottom: 20px">
+          The Pomodoro Technique: Study for 25 minutes, then take a 5-minute
+          break. After 4 sessions, take a longer 15-minute break.
+        </p>
+
+        <!-- Timer Display -->
+        <div class="timer-container">
+          <div class="timer-mode-selector">
+            <button class="timer-mode-btn active" data-mode="focus">
+              <i class="fas fa-brain"></i> Focus
+            </button>
+            <button class="timer-mode-btn" data-mode="short">
+              <i class="fas fa-coffee"></i> Short Break
+            </button>
+            <button class="timer-mode-btn" data-mode="long">
+              <i class="fas fa-couch"></i> Long Break
+            </button>
+          </div>
+
+          <div class="timer-display">
+            <div class="timer-circle">
+              <svg class="timer-progress" viewBox="0 0 200 200">
+                <circle
+                  class="timer-progress-bg"
+                  cx="100"
+                  cy="100"
+                  r="90"
+                ></circle>
+                <circle
+                  class="timer-progress-bar"
+                  cx="100"
+                  cy="100"
+                  r="90"
+                  id="progressCircle"
+                ></circle>
+              </svg>
+              <div class="timer-time">
+                <span id="timerDisplay">25:00</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="timer-controls">
+            <button class="btn btn-primary btn-lg" id="startBtn" onclick="startTimer()">
+              <i class="fas fa-play"></i> Start
+            </button>
+            <button class="btn btn-warning btn-lg" id="pauseBtn" onclick="pauseTimer()" style="display: none">
+              <i class="fas fa-pause"></i> Pause
+            </button>
+            <button class="btn btn-danger" onclick="resetTimer()">
+              <i class="fas fa-redo"></i> Reset
+            </button>
+          </div>
+
+          <div class="timer-stats">
+            <div class="timer-stat-item">
+              <i class="fas fa-check-circle"></i>
+              <div>
+                <strong id="sessionsCompleted">0</strong>
+                <span>Sessions Today</span>
+              </div>
+            </div>
+            <div class="timer-stat-item">
+              <i class="fas fa-fire"></i>
+              <div>
+                <strong id="currentStreak">0</strong>
+                <span>Current Streak</span>
+              </div>
+            </div>
+            <div class="timer-stat-item">
+              <i class="fas fa-clock"></i>
+              <div>
+                <strong id="todayTime">0h 0m</strong>
+                <span>Time Today</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings -->
+          <div class="timer-settings">
+            <button class="btn btn-secondary" onclick="toggleSettings()">
+              <i class="fas fa-cog"></i> Settings
+            </button>
+          </div>
+
+          <div id="timerSettingsPanel" class="settings-panel" style="display: none">
+            <h3><i class="fas fa-cog"></i> Timer Settings</h3>
+            <div class="form-group">
+              <label>Focus Duration (minutes)</label>
+              <input type="number" id="focusDuration" value="25" min="1" max="60" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Short Break (minutes)</label>
+              <input type="number" id="shortBreakDuration" value="5" min="1" max="30" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>Long Break (minutes)</label>
+              <input type="number" id="longBreakDuration" value="15" min="1" max="60" class="form-input" />
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="autoStart" />
+                Auto-start next session
+              </label>
+            </div>
+            <div class="form-group">
+              <label>
+                <input type="checkbox" id="soundEnabled" checked />
+                Enable sound notifications
+              </label>
+            </div>
+            <button class="btn btn-success" onclick="saveSettings()">
+              <i class="fas fa-save"></i> Save Settings
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Study Smart, Not Just Hard
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Set active navigation
+      setActiveNav("timer");
+
+      // Timer variables
+      let timerInterval = null;
+      let timeRemaining = 25 * 60; // 25 minutes in seconds
+      let isRunning = false;
+      let currentMode = "focus"; // focus, short, long
+      let sessionsCount = 0;
+      let totalTimeToday = 0;
+
+      // Timer durations (in seconds)
+      let durations = {
+        focus: 25 * 60,
+        short: 5 * 60,
+        long: 15 * 60,
+      };
+
+      // Load settings and stats
+      function loadTimerData() {
+        const settings = JSON.parse(localStorage.getItem("timerSettings")) || {};
+        if (settings.focusDuration) durations.focus = settings.focusDuration * 60;
+        if (settings.shortBreakDuration) durations.short = settings.shortBreakDuration * 60;
+        if (settings.longBreakDuration) durations.long = settings.longBreakDuration * 60;
+
+        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+          sessionsToday: 0,
+          totalTimeToday: 0,
+          lastDate: new Date().toDateString(),
+          currentStreak: 0,
+        };
+
+        // Reset if it's a new day
+        if (timerStats.lastDate !== new Date().toDateString()) {
+          timerStats.sessionsToday = 0;
+          timerStats.totalTimeToday = 0;
+          timerStats.lastDate = new Date().toDateString();
+          localStorage.setItem("timerStats", JSON.stringify(timerStats));
+        }
+
+        sessionsCount = timerStats.sessionsToday;
+        totalTimeToday = timerStats.totalTimeToday;
+
+        updateStatsDisplay();
+      }
+
+      // Update stats display
+      function updateStatsDisplay() {
+        document.getElementById("sessionsCompleted").textContent = sessionsCount;
+        
+        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || { currentStreak: 0 };
+        document.getElementById("currentStreak").textContent = timerStats.currentStreak || 0;
+        
+        const hours = Math.floor(totalTimeToday / 60);
+        const minutes = totalTimeToday % 60;
+        document.getElementById("todayTime").textContent = `${hours}h ${minutes}m`;
+      }
+
+      // Format time display
+      function formatTime(seconds) {
+        const mins = Math.floor(seconds / 60);
+        const secs = seconds % 60;
+        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+      }
+
+      // Update timer display
+      function updateDisplay() {
+        document.getElementById("timerDisplay").textContent = formatTime(timeRemaining);
+        
+        // Update progress circle
+        const totalTime = durations[currentMode];
+        const progress = ((totalTime - timeRemaining) / totalTime) * 565;
+        document.getElementById("progressCircle").style.strokeDashoffset = 565 - progress;
+      }
+
+      // Start timer
+      function startTimer() {
+        if (isRunning) return;
+        
+        isRunning = true;
+        document.getElementById("startBtn").style.display = "none";
+        document.getElementById("pauseBtn").style.display = "inline-flex";
+
+        timerInterval = setInterval(() => {
+          if (timeRemaining > 0) {
+            timeRemaining--;
+            updateDisplay();
+          } else {
+            completeSession();
+          }
+        }, 1000);
+      }
+
+      // Pause timer
+      function pauseTimer() {
+        isRunning = false;
+        clearInterval(timerInterval);
+        document.getElementById("startBtn").style.display = "inline-flex";
+        document.getElementById("pauseBtn").style.display = "none";
+      }
+
+      // Reset timer
+      function resetTimer() {
+        pauseTimer();
+        timeRemaining = durations[currentMode];
+        updateDisplay();
+      }
+
+      // Complete session
+      function completeSession() {
+        pauseTimer();
+        
+        // Play sound if enabled
+        const settings = JSON.parse(localStorage.getItem("timerSettings")) || { soundEnabled: true };
+        if (settings.soundEnabled !== false) {
+          playNotificationSound();
+        }
+
+        if (currentMode === "focus") {
+          // Update stats
+          sessionsCount++;
+          totalTimeToday += Math.floor(durations.focus / 60);
+          
+          const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+            sessionsToday: 0,
+            totalTimeToday: 0,
+            currentStreak: 0,
+            lastDate: new Date().toDateString(),
+          };
+          
+          timerStats.sessionsToday = sessionsCount;
+          timerStats.totalTimeToday = totalTimeToday;
+          timerStats.currentStreak = sessionsCount;
+          localStorage.setItem("timerStats", JSON.stringify(timerStats));
+
+          // Update main stats
+          const mainStats = JSON.parse(localStorage.getItem("medStudyStats")) || {
+            totalStudyTime: 0,
+            totalFlashcards: 0,
+            quizzesTaken: 0,
+            totalScore: 0,
+          };
+          mainStats.totalStudyTime += Math.floor(durations.focus / 60);
+          localStorage.setItem("medStudyStats", JSON.stringify(mainStats));
+
+          updateStatsDisplay();
+
+          alert("🎉 Focus session complete! Time for a break!");
+          
+          // Auto-switch to break
+          if (sessionsCount % 4 === 0) {
+            switchMode("long");
+          } else {
+            switchMode("short");
+          }
+        } else {
+          alert("Break time over! Ready for another focus session?");
+          switchMode("focus");
+        }
+
+        // Auto-start if enabled
+        if (settings.autoStart) {
+          setTimeout(startTimer, 2000);
+        }
+      }
+
+      // Switch timer mode
+      function switchMode(mode) {
+        currentMode = mode;
+        pauseTimer();
+        timeRemaining = durations[mode];
+        updateDisplay();
+
+        // Update mode buttons
+        document.querySelectorAll(".timer-mode-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.getAttribute("data-mode") === mode) {
+            btn.classList.add("active");
+          }
+        });
+      }
+
+      // Mode button click handlers
+      document.querySelectorAll(".timer-mode-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          const mode = this.getAttribute("data-mode");
+          switchMode(mode);
+        });
+      });
+
+      // Toggle settings panel
+      function toggleSettings() {
+        const panel = document.getElementById("timerSettingsPanel");
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+        
+        // Load current settings
+        const settings = JSON.parse(localStorage.getItem("timerSettings")) || {};
+        document.getElementById("focusDuration").value = settings.focusDuration || 25;
+        document.getElementById("shortBreakDuration").value = settings.shortBreakDuration || 5;
+        document.getElementById("longBreakDuration").value = settings.longBreakDuration || 15;
+        document.getElementById("autoStart").checked = settings.autoStart || false;
+        document.getElementById("soundEnabled").checked = settings.soundEnabled !== false;
+      }
+
+      // Save settings
+      function saveSettings() {
+        const settings = {
+          focusDuration: parseInt(document.getElementById("focusDuration").value),
+          shortBreakDuration: parseInt(document.getElementById("shortBreakDuration").value),
+          longBreakDuration: parseInt(document.getElementById("longBreakDuration").value),
+          autoStart: document.getElementById("autoStart").checked,
+          soundEnabled: document.getElementById("soundEnabled").checked,
+        };
+
+        localStorage.setItem("timerSettings", JSON.stringify(settings));
+        
+        // Update durations
+        durations.focus = settings.focusDuration * 60;
+        durations.short = settings.shortBreakDuration * 60;
+        durations.long = settings.longBreakDuration * 60;
+        
+        // Reset current timer with new duration
+        resetTimer();
+        
+        toggleSettings();
+        alert("Settings saved!");
+      }
+
+      // Play notification sound (simple beep using Web Audio API)
+      function playNotificationSound() {
+        try {
+          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const oscillator = audioContext.createOscillator();
+          const gainNode = audioContext.createGain();
+
+          oscillator.connect(gainNode);
+          gainNode.connect(audioContext.destination);
+
+          oscillator.frequency.value = 800;
+          oscillator.type = "sine";
+
+          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+          oscillator.start(audioContext.currentTime);
+          oscillator.stop(audioContext.currentTime + 0.5);
+        } catch (e) {
+          console.log("Audio not supported");
+        }
+      }
+
+      // Initialize on page load
+      loadTimerData();
+      updateDisplay();
+    </script>
+  </body>
+</html>
+

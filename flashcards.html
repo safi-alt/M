@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Study Buddy - Flashcards</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
+        <p>Your Ultimate Companion for Medical Exam Success</p>
+        <p>Made with <i class="fas fa-heart"></i> by S</p>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <a href="index.html" class="nav-tab" data-page="dashboard">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="timer.html" class="nav-tab" data-page="timer">
+          <i class="fas fa-clock"></i> Study Timer
+        </a>
+        <a href="modules.html" class="nav-tab" data-page="modules">
+          <i class="fas fa-book-medical"></i> Modules
+        </a>
+        <a href="flashcards.html" class="nav-tab active" data-page="flashcards">
+          <i class="fas fa-layer-group"></i> Flashcards
+        </a>
+        <a href="progress.html" class="nav-tab" data-page="progress">
+          <i class="fas fa-chart-line"></i> Progress
+        </a>
+      </div>
+
+      <!-- Flashcards Section -->
+      <div class="content-section active">
+        <div class="section-header">
+          <h2><i class="fas fa-layer-group"></i> Study Flashcards</h2>
+          <div>
+            <select id="moduleFilter" class="form-input" style="display: inline-block; width: auto; margin-right: 10px;">
+              <option value="all">All Modules</option>
+            </select>
+            <button class="btn btn-primary" onclick="startReview()">
+              <i class="fas fa-play"></i> Start Review
+            </button>
+          </div>
+        </div>
+
+        <!-- Flashcards List View -->
+        <div id="flashcardsListView">
+          <div id="allFlashcardsList" class="flashcards-list">
+            <div class="empty-state">
+              <i class="fas fa-layer-group"></i>
+              <h3>No Flashcards Yet</h3>
+              <p>Create flashcards in your modules to start studying!</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flashcard Review Mode -->
+        <div id="flashcardReview" style="display: none">
+          <button class="btn btn-warning" onclick="exitReview()" style="margin-bottom: 20px">
+            <i class="fas fa-arrow-left"></i> Exit Review
+          </button>
+
+          <div class="flashcard-review-container">
+            <div class="review-progress">
+              <span id="reviewProgress">0 / 0</span>
+            </div>
+
+            <div class="flashcard-flip-card" onclick="flipCard()">
+              <div class="flashcard-flip-inner" id="flipCard">
+                <div class="flashcard-flip-front">
+                  <div class="flip-label">Question</div>
+                  <p id="cardQuestion">Loading...</p>
+                  <div class="flip-hint">Click to flip</div>
+                </div>
+                <div class="flashcard-flip-back">
+                  <div class="flip-label">Answer</div>
+                  <p id="cardAnswer">Loading...</p>
+                  <div class="flip-hint">Click to flip back</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="review-controls">
+              <button class="btn btn-danger" onclick="markDifficult()">
+                <i class="fas fa-times"></i> Difficult
+              </button>
+              <button class="btn btn-warning" onclick="markOkay()">
+                <i class="fas fa-minus"></i> Okay
+              </button>
+              <button class="btn btn-success" onclick="markEasy()">
+                <i class="fas fa-check"></i> Easy
+              </button>
+            </div>
+
+            <div class="review-navigation">
+              <button class="btn btn-secondary" onclick="previousCard()" id="prevBtn">
+                <i class="fas fa-arrow-left"></i> Previous
+              </button>
+              <button class="btn btn-secondary" onclick="nextCard()" id="nextBtn">
+                Next <i class="fas fa-arrow-right"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Study Smart, Not Just Hard
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+      // Set active navigation
+      setActiveNav("flashcards");
+
+      // Load flashcards
+      let allFlashcards = [];
+      let filteredFlashcards = [];
+      let currentCardIndex = 0;
+      let isFlipped = false;
+
+      function loadAllFlashcards() {
+        const modules = getModules();
+        const moduleFilter = document.getElementById("moduleFilter");
+        
+        // Clear and populate module filter
+        moduleFilter.innerHTML = '<option value="all">All Modules</option>';
+        modules.forEach(module => {
+          const option = document.createElement("option");
+          option.value = module.id;
+          option.textContent = module.name;
+          moduleFilter.appendChild(option);
+        });
+
+        // Collect all flashcards
+        allFlashcards = [];
+        modules.forEach(module => {
+          module.flashcards.forEach(card => {
+            allFlashcards.push({
+              ...card,
+              moduleName: module.name,
+              moduleColor: module.color,
+              moduleId: module.id
+            });
+          });
+        });
+
+        displayFlashcards();
+      }
+
+      function displayFlashcards() {
+        const filterValue = document.getElementById("moduleFilter").value;
+        const listContainer = document.getElementById("allFlashcardsList");
+
+        // Filter flashcards
+        filteredFlashcards = filterValue === "all" 
+          ? allFlashcards 
+          : allFlashcards.filter(card => card.moduleId === filterValue);
+
+        if (filteredFlashcards.length === 0) {
+          listContainer.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-layer-group"></i>
+              <h3>No Flashcards Yet</h3>
+              <p>Create flashcards in your modules to start studying!</p>
+            </div>
+          `;
+          return;
+        }
+
+        listContainer.innerHTML = filteredFlashcards.map((card, index) => `
+          <div class="flashcard-item">
+            <div class="flashcard-header">
+              <h4>
+                <span style="color: ${card.moduleColor}; margin-right: 5px;">●</span>
+                ${card.moduleName}
+              </h4>
+            </div>
+            <div class="flashcard-content">
+              <strong>Q:</strong> ${card.question}<br>
+              <strong>A:</strong> ${card.answer}
+            </div>
+          </div>
+        `).join("");
+      }
+
+      // Review Mode Functions
+      function startReview() {
+        if (filteredFlashcards.length === 0) {
+          alert("No flashcards to review! Create some flashcards in your modules first.");
+          return;
+        }
+
+        currentCardIndex = 0;
+        isFlipped = false;
+        document.getElementById("flashcardsListView").style.display = "none";
+        document.getElementById("flashcardReview").style.display = "block";
+        loadCard();
+      }
+
+      function exitReview() {
+        document.getElementById("flashcardsListView").style.display = "block";
+        document.getElementById("flashcardReview").style.display = "none";
+      }
+
+      function loadCard() {
+        if (filteredFlashcards.length === 0) return;
+
+        const card = filteredFlashcards[currentCardIndex];
+        document.getElementById("cardQuestion").textContent = card.question;
+        document.getElementById("cardAnswer").textContent = card.answer;
+        document.getElementById("reviewProgress").textContent = 
+          `${currentCardIndex + 1} / ${filteredFlashcards.length}`;
+
+        // Reset flip
+        isFlipped = false;
+        document.getElementById("flipCard").classList.remove("flipped");
+
+        // Update button states
+        document.getElementById("prevBtn").disabled = currentCardIndex === 0;
+        document.getElementById("nextBtn").disabled = currentCardIndex === filteredFlashcards.length - 1;
+      }
+
+      function flipCard() {
+        isFlipped = !isFlipped;
+        const flipCard = document.getElementById("flipCard");
+        if (isFlipped) {
+          flipCard.classList.add("flipped");
+        } else {
+          flipCard.classList.remove("flipped");
+        }
+      }
+
+      function nextCard() {
+        if (currentCardIndex < filteredFlashcards.length - 1) {
+          currentCardIndex++;
+          loadCard();
+        }
+      }
+
+      function previousCard() {
+        if (currentCardIndex > 0) {
+          currentCardIndex--;
+          loadCard();
+        }
+      }
+
+      function markDifficult() {
+        // Could track difficult cards for future features
+        nextCard();
+      }
+
+      function markOkay() {
+        nextCard();
+      }
+
+      function markEasy() {
+        nextCard();
+      }
+
+      // Event listener for module filter
+      document.addEventListener("DOMContentLoaded", function() {
+        loadAllFlashcards();
+        document.getElementById("moduleFilter").addEventListener("change", displayFlashcards);
+      });
+    </script>
+  </body>
+</html>
+

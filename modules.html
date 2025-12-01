@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Medical Study Buddy - Modules</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
+        <p>Your Ultimate Companion for Medical Exam Success</p>
+        <p>Made with <i class="fas fa-heart"></i> by S</p>
+      </header>
+
+      <!-- Navigation Tabs -->
+      <div class="nav-tabs">
+        <a href="index.html" class="nav-tab" data-page="dashboard">
+          <i class="fas fa-home"></i> Dashboard
+        </a>
+        <a href="timer.html" class="nav-tab" data-page="timer">
+          <i class="fas fa-clock"></i> Study Timer
+        </a>
+        <a href="modules.html" class="nav-tab active" data-page="modules">
+          <i class="fas fa-book-medical"></i> Modules
+        </a>
+        <a href="flashcards.html" class="nav-tab" data-page="flashcards">
+          <i class="fas fa-layer-group"></i> Flashcards
+        </a>
+        <a href="progress.html" class="nav-tab" data-page="progress">
+          <i class="fas fa-chart-line"></i> Progress
+        </a>
+      </div>
+
+      <!-- Modules Section -->
+      <div class="content-section active">
+        <div class="section-header">
+          <h2><i class="fas fa-book-medical"></i> Study Modules</h2>
+          <button class="btn btn-primary" onclick="showAddModuleForm()">
+            <i class="fas fa-plus"></i> Add Module
+          </button>
+        </div>
+
+        <!-- Add Module Form (Hidden by default) -->
+        <div id="addModuleForm" class="module-form" style="display: none">
+          <h3 style="margin-bottom: 15px; color: var(--primary-color)">
+            <i class="fas fa-plus-circle"></i> Create New Module
+          </h3>
+          <div class="form-group">
+            <label for="moduleName">Module Name</label>
+            <input
+              type="text"
+              id="moduleName"
+              placeholder="e.g., Anatomy, Physiology, Pharmacology"
+              class="form-input"
+            />
+          </div>
+          <div class="form-group">
+            <label for="moduleDescription">Description (Optional)</label>
+            <textarea
+              id="moduleDescription"
+              placeholder="Brief description of this module..."
+              class="form-input"
+              rows="3"
+            ></textarea>
+          </div>
+          <div class="form-group">
+            <label for="moduleColor">Choose Color</label>
+            <div class="color-picker">
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#667eea"
+                id="color1"
+                checked
+              />
+              <label for="color1" class="color-option" style="background: #667eea"></label>
+              
+              <input type="radio" name="moduleColor" value="#10b981" id="color2" />
+              <label for="color2" class="color-option" style="background: #10b981"></label>
+              
+              <input type="radio" name="moduleColor" value="#f59e0b" id="color3" />
+              <label for="color3" class="color-option" style="background: #f59e0b"></label>
+              
+              <input type="radio" name="moduleColor" value="#ef4444" id="color4" />
+              <label for="color4" class="color-option" style="background: #ef4444"></label>
+              
+              <input type="radio" name="moduleColor" value="#8b5cf6" id="color5" />
+              <label for="color5" class="color-option" style="background: #8b5cf6"></label>
+              
+              <input type="radio" name="moduleColor" value="#ec4899" id="color6" />
+              <label for="color6" class="color-option" style="background: #ec4899"></label>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button class="btn btn-success" onclick="saveModule()">
+              <i class="fas fa-save"></i> Save Module
+            </button>
+            <button class="btn btn-danger" onclick="cancelAddModule()">
+              <i class="fas fa-times"></i> Cancel
+            </button>
+          </div>
+        </div>
+
+        <!-- Modules List -->
+        <div id="modulesList" class="modules-grid">
+          <div class="empty-state">
+            <i class="fas fa-book-medical"></i>
+            <h3>No Modules Yet</h3>
+            <p>
+              Create your first study module to organize your medical exam preparation
+            </p>
+          </div>
+        </div>
+
+        <!-- Module Detail View (Hidden by default) -->
+        <div id="moduleDetail" class="module-detail" style="display: none">
+          <button class="btn btn-warning" onclick="backToModules()" style="margin-bottom: 20px">
+            <i class="fas fa-arrow-left"></i> Back to Modules
+          </button>
+          
+          <div class="module-detail-header">
+            <div>
+              <h2 id="detailModuleName"></h2>
+              <p id="detailModuleDescription"></p>
+            </div>
+            <button class="btn btn-danger" onclick="deleteCurrentModule()">
+              <i class="fas fa-trash"></i> Delete Module
+            </button>
+          </div>
+
+          <div class="content-tabs">
+            <button class="content-tab active" onclick="showContentTab('notes')">
+              <i class="fas fa-sticky-note"></i> Notes
+            </button>
+            <button class="content-tab" onclick="showContentTab('flashcards')">
+              <i class="fas fa-layer-group"></i> Flashcards
+            </button>
+            <button class="content-tab" onclick="showContentTab('quiz')">
+              <i class="fas fa-question-circle"></i> Quiz
+            </button>
+          </div>
+
+          <!-- Notes Content -->
+          <div id="notesContent" class="module-content active">
+            <div class="content-header">
+              <h3>Study Notes</h3>
+              <button class="btn btn-primary" onclick="addNote()">
+                <i class="fas fa-plus"></i> Add Note
+              </button>
+            </div>
+            <div id="notesList" class="notes-list">
+              <p class="empty-message">No notes yet. Add your first note!</p>
+            </div>
+          </div>
+
+          <!-- Flashcards Content -->
+          <div id="flashcardsContent" class="module-content">
+            <div class="content-header">
+              <h3>Flashcards</h3>
+              <button class="btn btn-primary" onclick="addFlashcard()">
+                <i class="fas fa-plus"></i> Add Flashcard
+              </button>
+            </div>
+            <div id="flashcardsList" class="flashcards-list">
+              <p class="empty-message">No flashcards yet. Create your first flashcard!</p>
+            </div>
+          </div>
+
+          <!-- Quiz Content -->
+          <div id="quizContent" class="module-content">
+            <div class="content-header">
+              <h3>Quiz Questions</h3>
+              <button class="btn btn-primary" onclick="addQuizQuestion()">
+                <i class="fas fa-plus"></i> Add Question
+              </button>
+            </div>
+            <div id="quizList" class="quiz-list">
+              <p class="empty-message">No quiz questions yet. Add your first question!</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <p>
+          Study Smart, Not Just Hard
+        </p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+    <script src="modules.js"></script>
+    <script>
+      // Set active navigation
+      setActiveNav("modules");
+    </script>
+  </body>
+</html>
+
