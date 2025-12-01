@@ -182,7 +182,7 @@ header .fa-heart {
 }
 
 .stat-card:nth-child(4) i {
-  color: #f472b6;
+  color: #fb923c;
 }
 
 .stat-card h3 {
@@ -719,16 +719,76 @@ footer i {
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
 }
 
+.clickable-card {
+  cursor: pointer;
+  position: relative;
+}
+
+.clickable-card::after {
+  content: "Click to review";
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.clickable-card:hover::after {
+  opacity: 1;
+}
+
 .flashcard-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 15px;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .flashcard-header h4 {
   color: white;
   font-size: 1rem;
+  flex: 1;
+}
+
+.flashcard-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.difficulty-badge,
+.difficulty-tag {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.difficulty-badge.difficult,
+.difficulty-tag.difficulty-Difficult {
+  background: rgba(239, 68, 68, 0.8);
+  color: white;
+}
+
+.difficulty-badge.okay,
+.difficulty-tag.difficulty-Okay {
+  background: rgba(245, 158, 11, 0.8);
+  color: white;
+}
+
+.difficulty-badge.easy,
+.difficulty-tag.difficulty-Easy {
+  background: rgba(16, 185, 129, 0.8);
+  color: white;
 }
 
 .flashcard-content {

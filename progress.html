@@ -68,7 +68,7 @@
             <div class="stat-card">
               <i class="fas fa-fire"></i>
               <h3 id="studyStreak">0</h3>
-              <p>Day Streak</p>
+              <p>Session Streak</p>
             </div>
           </div>
         </div>
@@ -99,7 +99,7 @@
             </div>
             <div class="history-item">
               <div class="history-label">Current Streak</div>
-              <div class="history-value" id="currentStreak">0 days</div>
+              <div class="history-value" id="currentStreak">0 sessions</div>
             </div>
           </div>
         </div>
@@ -192,7 +192,7 @@
         ).textContent = `${todayHours}h ${todayMinutes}m`;
         document.getElementById(
           "currentStreak"
-        ).textContent = `${timerStats.currentStreak} days`;
+        ).textContent = `${timerStats.currentStreak} sessions`;
 
         // Load module breakdown
         loadModuleBreakdown(modules);

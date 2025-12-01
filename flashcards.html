@@ -200,12 +200,19 @@
         listContainer.innerHTML = filteredFlashcards
           .map(
             (card, index) => `
-          <div class="flashcard-item">
+          <div class="flashcard-item clickable-card" onclick="startReviewFromCard(${index})">
             <div class="flashcard-header">
               <h4>
-                <span style="color: ${card.moduleColor}; margin-right: 5px;">●</span>
+                <span style="color: ${
+                  card.moduleColor
+                }; margin-right: 5px;">●</span>
                 ${card.moduleName}
               </h4>
+              ${
+                card.difficulty
+                  ? `<span class="difficulty-tag difficulty-${card.difficulty}">${card.difficulty}</span>`
+                  : ""
+              }
             </div>
             <div class="flashcard-content">
               <strong>Q:</strong> ${card.question}<br>
@@ -233,9 +240,19 @@
         loadCard();
       }
 
+      function startReviewFromCard(cardIndex) {
+        currentCardIndex = cardIndex;
+        isFlipped = false;
+        document.getElementById("flashcardsListView").style.display = "none";
+        document.getElementById("flashcardReview").style.display = "block";
+        loadCard();
+      }
+
       function exitReview() {
         document.getElementById("flashcardsListView").style.display = "block";
         document.getElementById("flashcardReview").style.display = "none";
+        // Reload flashcards from localStorage to show updated tags
+        loadAllFlashcards();
       }
 
       function loadCard() {
@@ -283,16 +300,37 @@
       }
 
       function markDifficult() {
-        // Could track difficult cards for future features
+        saveDifficulty("Difficult");
         nextCard();
       }
 
       function markOkay() {
+        saveDifficulty("Okay");
         nextCard();
       }
 
       function markEasy() {
+        saveDifficulty("Easy");
         nextCard();
+      }
+
+      function saveDifficulty(difficulty) {
+        const currentCard = filteredFlashcards[currentCardIndex];
+        const modules = getModules();
+
+        // Find the module and flashcard
+        const module = modules.find((m) => m.id === currentCard.moduleId);
+        if (module) {
+          const flashcard = module.flashcards.find(
+            (f) =>
+              f.question === currentCard.question &&
+              f.answer === currentCard.answer
+          );
+          if (flashcard) {
+            flashcard.difficulty = difficulty;
+            saveModules(modules);
+          }
+        }
       }
 
       // Event listener for module filter

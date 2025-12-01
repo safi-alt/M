@@ -14,7 +14,7 @@ function loadStats() {
   const timeElement = document.getElementById("totalStudyTime");
   const flashcardsElement = document.getElementById("totalFlashcards");
   const modulesElement = document.getElementById("modulesCompleted");
-  const scoreElement = document.getElementById("averageScore");
+  const streakElement = document.getElementById("sessionStreak");
 
   if (timeElement) {
     const hours = Math.floor(stats.totalStudyTime / 60);
@@ -30,12 +30,11 @@ function loadStats() {
     modulesElement.textContent = modules.length;
   }
 
-  if (scoreElement) {
-    const avgScore =
-      stats.quizzesTaken > 0
-        ? Math.round(stats.totalScore / stats.quizzesTaken)
-        : 0;
-    scoreElement.textContent = `${avgScore}%`;
+  if (streakElement) {
+    const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+      currentStreak: 0,
+    };
+    streakElement.textContent = timerStats.currentStreak || 0;
   }
 }
 

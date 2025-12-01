@@ -205,9 +205,12 @@ function loadModuleFlashcards(module) {
       <div class="flashcard-item">
         <div class="flashcard-header">
           <h4>Card ${index + 1}</h4>
-          <button class="btn-icon" onclick="deleteFlashcard(${index})">
-            <i class="fas fa-trash"></i>
-          </button>
+          <div class="flashcard-actions">
+            ${card.difficulty ? `<span class="difficulty-tag difficulty-${card.difficulty}">${card.difficulty}</span>` : ''}
+            <button class="btn-icon" onclick="deleteFlashcard(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </div>
         <div class="flashcard-content">
           <strong>Q:</strong> ${card.question}<br>
@@ -295,6 +298,7 @@ function addFlashcard() {
     module.flashcards.push({
       question: question,
       answer: answer,
+      difficulty: null,
       createdAt: new Date().toISOString(),
     });
     saveModules(modules);
