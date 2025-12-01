@@ -15,7 +15,7 @@
       <header>
         <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
         <p>Your Ultimate Companion for Medical Exam Success</p>
-        <p>Made with <i class="fas fa-heart"></i> by S</p>
+        <p>Made with <i class="fas fa-heart"></i> for M</p>
       </header>
 
       <!-- Navigation Tabs -->
@@ -85,10 +85,19 @@
           </div>
 
           <div class="timer-controls">
-            <button class="btn btn-primary btn-lg" id="startBtn" onclick="startTimer()">
+            <button
+              class="btn btn-primary btn-lg"
+              id="startBtn"
+              onclick="startTimer()"
+            >
               <i class="fas fa-play"></i> Start
             </button>
-            <button class="btn btn-warning btn-lg" id="pauseBtn" onclick="pauseTimer()" style="display: none">
+            <button
+              class="btn btn-warning btn-lg"
+              id="pauseBtn"
+              onclick="pauseTimer()"
+              style="display: none"
+            >
               <i class="fas fa-pause"></i> Pause
             </button>
             <button class="btn btn-danger" onclick="resetTimer()">
@@ -127,19 +136,44 @@
             </button>
           </div>
 
-          <div id="timerSettingsPanel" class="settings-panel" style="display: none">
+          <div
+            id="timerSettingsPanel"
+            class="settings-panel"
+            style="display: none"
+          >
             <h3><i class="fas fa-cog"></i> Timer Settings</h3>
             <div class="form-group">
               <label>Focus Duration (minutes)</label>
-              <input type="number" id="focusDuration" value="25" min="1" max="60" class="form-input" />
+              <input
+                type="number"
+                id="focusDuration"
+                value="25"
+                min="1"
+                max="60"
+                class="form-input"
+              />
             </div>
             <div class="form-group">
               <label>Short Break (minutes)</label>
-              <input type="number" id="shortBreakDuration" value="5" min="1" max="30" class="form-input" />
+              <input
+                type="number"
+                id="shortBreakDuration"
+                value="5"
+                min="1"
+                max="30"
+                class="form-input"
+              />
             </div>
             <div class="form-group">
               <label>Long Break (minutes)</label>
-              <input type="number" id="longBreakDuration" value="15" min="1" max="60" class="form-input" />
+              <input
+                type="number"
+                id="longBreakDuration"
+                value="15"
+                min="1"
+                max="60"
+                class="form-input"
+              />
             </div>
             <div class="form-group">
               <label>
@@ -162,7 +196,8 @@
 
       <footer>
         <p>
-          Study Smart, Not Just Hard
+          Made with <i class="fas fa-heart"></i> by S | Study Smart, Not Just
+          Hard
         </p>
       </footer>
     </div>
@@ -189,10 +224,14 @@
 
       // Load settings and stats
       function loadTimerData() {
-        const settings = JSON.parse(localStorage.getItem("timerSettings")) || {};
-        if (settings.focusDuration) durations.focus = settings.focusDuration * 60;
-        if (settings.shortBreakDuration) durations.short = settings.shortBreakDuration * 60;
-        if (settings.longBreakDuration) durations.long = settings.longBreakDuration * 60;
+        const settings =
+          JSON.parse(localStorage.getItem("timerSettings")) || {};
+        if (settings.focusDuration)
+          durations.focus = settings.focusDuration * 60;
+        if (settings.shortBreakDuration)
+          durations.short = settings.shortBreakDuration * 60;
+        if (settings.longBreakDuration)
+          durations.long = settings.longBreakDuration * 60;
 
         const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
           sessionsToday: 0,
@@ -217,37 +256,47 @@
 
       // Update stats display
       function updateStatsDisplay() {
-        document.getElementById("sessionsCompleted").textContent = sessionsCount;
-        
-        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || { currentStreak: 0 };
-        document.getElementById("currentStreak").textContent = timerStats.currentStreak || 0;
-        
+        document.getElementById("sessionsCompleted").textContent =
+          sessionsCount;
+
+        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+          currentStreak: 0,
+        };
+        document.getElementById("currentStreak").textContent =
+          timerStats.currentStreak || 0;
+
         const hours = Math.floor(totalTimeToday / 60);
         const minutes = totalTimeToday % 60;
-        document.getElementById("todayTime").textContent = `${hours}h ${minutes}m`;
+        document.getElementById(
+          "todayTime"
+        ).textContent = `${hours}h ${minutes}m`;
       }
 
       // Format time display
       function formatTime(seconds) {
         const mins = Math.floor(seconds / 60);
         const secs = seconds % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
+        return `${mins.toString().padStart(2, "0")}:${secs
+          .toString()
+          .padStart(2, "0")}`;
       }
 
       // Update timer display
       function updateDisplay() {
-        document.getElementById("timerDisplay").textContent = formatTime(timeRemaining);
-        
+        document.getElementById("timerDisplay").textContent =
+          formatTime(timeRemaining);
+
         // Update progress circle
         const totalTime = durations[currentMode];
         const progress = ((totalTime - timeRemaining) / totalTime) * 565;
-        document.getElementById("progressCircle").style.strokeDashoffset = 565 - progress;
+        document.getElementById("progressCircle").style.strokeDashoffset =
+          565 - progress;
       }
 
       // Start timer
       function startTimer() {
         if (isRunning) return;
-        
+
         isRunning = true;
         document.getElementById("startBtn").style.display = "none";
         document.getElementById("pauseBtn").style.display = "inline-flex";
@@ -280,9 +329,11 @@
       // Complete session
       function completeSession() {
         pauseTimer();
-        
+
         // Play sound if enabled
-        const settings = JSON.parse(localStorage.getItem("timerSettings")) || { soundEnabled: true };
+        const settings = JSON.parse(localStorage.getItem("timerSettings")) || {
+          soundEnabled: true,
+        };
         if (settings.soundEnabled !== false) {
           playNotificationSound();
         }
@@ -291,21 +342,23 @@
           // Update stats
           sessionsCount++;
           totalTimeToday += Math.floor(durations.focus / 60);
-          
+
           const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
             sessionsToday: 0,
             totalTimeToday: 0,
             currentStreak: 0,
             lastDate: new Date().toDateString(),
           };
-          
+
           timerStats.sessionsToday = sessionsCount;
           timerStats.totalTimeToday = totalTimeToday;
           timerStats.currentStreak = sessionsCount;
           localStorage.setItem("timerStats", JSON.stringify(timerStats));
 
           // Update main stats
-          const mainStats = JSON.parse(localStorage.getItem("medStudyStats")) || {
+          const mainStats = JSON.parse(
+            localStorage.getItem("medStudyStats")
+          ) || {
             totalStudyTime: 0,
             totalFlashcards: 0,
             quizzesTaken: 0,
@@ -317,7 +370,7 @@
           updateStatsDisplay();
 
           alert("🎉 Focus session complete! Time for a break!");
-          
+
           // Auto-switch to break
           if (sessionsCount % 4 === 0) {
             switchMode("long");
@@ -363,36 +416,48 @@
       function toggleSettings() {
         const panel = document.getElementById("timerSettingsPanel");
         panel.style.display = panel.style.display === "none" ? "block" : "none";
-        
+
         // Load current settings
-        const settings = JSON.parse(localStorage.getItem("timerSettings")) || {};
-        document.getElementById("focusDuration").value = settings.focusDuration || 25;
-        document.getElementById("shortBreakDuration").value = settings.shortBreakDuration || 5;
-        document.getElementById("longBreakDuration").value = settings.longBreakDuration || 15;
-        document.getElementById("autoStart").checked = settings.autoStart || false;
-        document.getElementById("soundEnabled").checked = settings.soundEnabled !== false;
+        const settings =
+          JSON.parse(localStorage.getItem("timerSettings")) || {};
+        document.getElementById("focusDuration").value =
+          settings.focusDuration || 25;
+        document.getElementById("shortBreakDuration").value =
+          settings.shortBreakDuration || 5;
+        document.getElementById("longBreakDuration").value =
+          settings.longBreakDuration || 15;
+        document.getElementById("autoStart").checked =
+          settings.autoStart || false;
+        document.getElementById("soundEnabled").checked =
+          settings.soundEnabled !== false;
       }
 
       // Save settings
       function saveSettings() {
         const settings = {
-          focusDuration: parseInt(document.getElementById("focusDuration").value),
-          shortBreakDuration: parseInt(document.getElementById("shortBreakDuration").value),
-          longBreakDuration: parseInt(document.getElementById("longBreakDuration").value),
+          focusDuration: parseInt(
+            document.getElementById("focusDuration").value
+          ),
+          shortBreakDuration: parseInt(
+            document.getElementById("shortBreakDuration").value
+          ),
+          longBreakDuration: parseInt(
+            document.getElementById("longBreakDuration").value
+          ),
           autoStart: document.getElementById("autoStart").checked,
           soundEnabled: document.getElementById("soundEnabled").checked,
         };
 
         localStorage.setItem("timerSettings", JSON.stringify(settings));
-        
+
         // Update durations
         durations.focus = settings.focusDuration * 60;
         durations.short = settings.shortBreakDuration * 60;
         durations.long = settings.longBreakDuration * 60;
-        
+
         // Reset current timer with new duration
         resetTimer();
-        
+
         toggleSettings();
         alert("Settings saved!");
       }
@@ -400,7 +465,8 @@
       // Play notification sound (simple beep using Web Audio API)
       function playNotificationSound() {
         try {
-          const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
           const oscillator = audioContext.createOscillator();
           const gainNode = audioContext.createGain();
 
@@ -411,7 +477,10 @@
           oscillator.type = "sine";
 
           gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-          gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+          gainNode.gain.exponentialRampToValueAtTime(
+            0.01,
+            audioContext.currentTime + 0.5
+          );
 
           oscillator.start(audioContext.currentTime);
           oscillator.stop(audioContext.currentTime + 0.5);
@@ -426,4 +495,3 @@
     </script>
   </body>
 </html>
-

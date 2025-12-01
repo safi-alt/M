@@ -15,7 +15,7 @@
       <header>
         <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
         <p>Your Ultimate Companion for Medical Exam Success</p>
-        <p>Made with <i class="fas fa-heart"></i> by S</p>
+        <p>Made with <i class="fas fa-heart"></i> for M</p>
       </header>
 
       <!-- Navigation Tabs -->
@@ -42,7 +42,11 @@
         <div class="section-header">
           <h2><i class="fas fa-layer-group"></i> Study Flashcards</h2>
           <div>
-            <select id="moduleFilter" class="form-input" style="display: inline-block; width: auto; margin-right: 10px;">
+            <select
+              id="moduleFilter"
+              class="form-input"
+              style="display: inline-block; width: auto; margin-right: 10px"
+            >
               <option value="all">All Modules</option>
             </select>
             <button class="btn btn-primary" onclick="startReview()">
@@ -64,7 +68,11 @@
 
         <!-- Flashcard Review Mode -->
         <div id="flashcardReview" style="display: none">
-          <button class="btn btn-warning" onclick="exitReview()" style="margin-bottom: 20px">
+          <button
+            class="btn btn-warning"
+            onclick="exitReview()"
+            style="margin-bottom: 20px"
+          >
             <i class="fas fa-arrow-left"></i> Exit Review
           </button>
 
@@ -101,10 +109,18 @@
             </div>
 
             <div class="review-navigation">
-              <button class="btn btn-secondary" onclick="previousCard()" id="prevBtn">
+              <button
+                class="btn btn-secondary"
+                onclick="previousCard()"
+                id="prevBtn"
+              >
                 <i class="fas fa-arrow-left"></i> Previous
               </button>
-              <button class="btn btn-secondary" onclick="nextCard()" id="nextBtn">
+              <button
+                class="btn btn-secondary"
+                onclick="nextCard()"
+                id="nextBtn"
+              >
                 Next <i class="fas fa-arrow-right"></i>
               </button>
             </div>
@@ -114,7 +130,8 @@
 
       <footer>
         <p>
-          Study Smart, Not Just Hard
+          Made with <i class="fas fa-heart"></i> by S | Study Smart, Not Just
+          Hard
         </p>
       </footer>
     </div>
@@ -133,10 +150,10 @@
       function loadAllFlashcards() {
         const modules = getModules();
         const moduleFilter = document.getElementById("moduleFilter");
-        
+
         // Clear and populate module filter
         moduleFilter.innerHTML = '<option value="all">All Modules</option>';
-        modules.forEach(module => {
+        modules.forEach((module) => {
           const option = document.createElement("option");
           option.value = module.id;
           option.textContent = module.name;
@@ -145,13 +162,13 @@
 
         // Collect all flashcards
         allFlashcards = [];
-        modules.forEach(module => {
-          module.flashcards.forEach(card => {
+        modules.forEach((module) => {
+          module.flashcards.forEach((card) => {
             allFlashcards.push({
               ...card,
               moduleName: module.name,
               moduleColor: module.color,
-              moduleId: module.id
+              moduleId: module.id,
             });
           });
         });
@@ -164,9 +181,10 @@
         const listContainer = document.getElementById("allFlashcardsList");
 
         // Filter flashcards
-        filteredFlashcards = filterValue === "all" 
-          ? allFlashcards 
-          : allFlashcards.filter(card => card.moduleId === filterValue);
+        filteredFlashcards =
+          filterValue === "all"
+            ? allFlashcards
+            : allFlashcards.filter((card) => card.moduleId === filterValue);
 
         if (filteredFlashcards.length === 0) {
           listContainer.innerHTML = `
@@ -179,7 +197,9 @@
           return;
         }
 
-        listContainer.innerHTML = filteredFlashcards.map((card, index) => `
+        listContainer.innerHTML = filteredFlashcards
+          .map(
+            (card, index) => `
           <div class="flashcard-item">
             <div class="flashcard-header">
               <h4>
@@ -192,13 +212,17 @@
               <strong>A:</strong> ${card.answer}
             </div>
           </div>
-        `).join("");
+        `
+          )
+          .join("");
       }
 
       // Review Mode Functions
       function startReview() {
         if (filteredFlashcards.length === 0) {
-          alert("No flashcards to review! Create some flashcards in your modules first.");
+          alert(
+            "No flashcards to review! Create some flashcards in your modules first."
+          );
           return;
         }
 
@@ -220,8 +244,9 @@
         const card = filteredFlashcards[currentCardIndex];
         document.getElementById("cardQuestion").textContent = card.question;
         document.getElementById("cardAnswer").textContent = card.answer;
-        document.getElementById("reviewProgress").textContent = 
-          `${currentCardIndex + 1} / ${filteredFlashcards.length}`;
+        document.getElementById("reviewProgress").textContent = `${
+          currentCardIndex + 1
+        } / ${filteredFlashcards.length}`;
 
         // Reset flip
         isFlipped = false;
@@ -229,7 +254,8 @@
 
         // Update button states
         document.getElementById("prevBtn").disabled = currentCardIndex === 0;
-        document.getElementById("nextBtn").disabled = currentCardIndex === filteredFlashcards.length - 1;
+        document.getElementById("nextBtn").disabled =
+          currentCardIndex === filteredFlashcards.length - 1;
       }
 
       function flipCard() {
@@ -270,11 +296,12 @@
       }
 
       // Event listener for module filter
-      document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("DOMContentLoaded", function () {
         loadAllFlashcards();
-        document.getElementById("moduleFilter").addEventListener("change", displayFlashcards);
+        document
+          .getElementById("moduleFilter")
+          .addEventListener("change", displayFlashcards);
       });
     </script>
   </body>
 </html>
-

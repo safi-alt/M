@@ -15,7 +15,7 @@
       <header>
         <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
         <p>Your Ultimate Companion for Medical Exam Success</p>
-        <p>Made with <i class="fas fa-heart"></i> by S</p>
+        <p>Made with <i class="fas fa-heart"></i> for M</p>
       </header>
 
       <!-- Navigation Tabs -->
@@ -144,7 +144,8 @@
 
       <footer>
         <p>
-          Study Smart, Not Just Hard
+          Made with <i class="fas fa-heart"></i> by S | Study Smart, Not Just
+          Hard
         </p>
       </footer>
     </div>
@@ -172,17 +173,26 @@
         // Update overall stats
         const hours = Math.floor(stats.totalStudyTime / 60);
         const minutes = stats.totalStudyTime % 60;
-        document.getElementById("totalTime").textContent = `${hours}h ${minutes}m`;
+        document.getElementById(
+          "totalTime"
+        ).textContent = `${hours}h ${minutes}m`;
         document.getElementById("totalModules").textContent = modules.length;
-        document.getElementById("totalCards").textContent = stats.totalFlashcards;
-        document.getElementById("studyStreak").textContent = timerStats.currentStreak;
+        document.getElementById("totalCards").textContent =
+          stats.totalFlashcards;
+        document.getElementById("studyStreak").textContent =
+          timerStats.currentStreak;
 
         // Update timer history
-        document.getElementById("todaySessions").textContent = timerStats.sessionsToday;
+        document.getElementById("todaySessions").textContent =
+          timerStats.sessionsToday;
         const todayHours = Math.floor(timerStats.totalTimeToday / 60);
         const todayMinutes = timerStats.totalTimeToday % 60;
-        document.getElementById("todayStudyTime").textContent = `${todayHours}h ${todayMinutes}m`;
-        document.getElementById("currentStreak").textContent = `${timerStats.currentStreak} days`;
+        document.getElementById(
+          "todayStudyTime"
+        ).textContent = `${todayHours}h ${todayMinutes}m`;
+        document.getElementById(
+          "currentStreak"
+        ).textContent = `${timerStats.currentStreak} days`;
 
         // Load module breakdown
         loadModuleBreakdown(modules);
@@ -205,11 +215,17 @@
           return;
         }
 
-        container.innerHTML = modules.map(module => `
-          <div class="module-progress-card" style="border-left: 4px solid ${module.color}">
+        container.innerHTML = modules
+          .map(
+            (module) => `
+          <div class="module-progress-card" style="border-left: 4px solid ${
+            module.color
+          }">
             <div class="module-progress-header">
               <h4 style="color: ${module.color}">${module.name}</h4>
-              <span class="module-date">${new Date(module.createdAt).toLocaleDateString()}</span>
+              <span class="module-date">${new Date(
+                module.createdAt
+              ).toLocaleDateString()}</span>
             </div>
             <div class="module-progress-stats">
               <div class="progress-stat">
@@ -226,7 +242,9 @@
               </div>
             </div>
           </div>
-        `).join("");
+        `
+          )
+          .join("");
       }
 
       function checkAchievements(modules, stats, timerStats) {
@@ -262,7 +280,11 @@
       }
 
       function resetAllData() {
-        if (!confirm("⚠️ WARNING: This will delete ALL your data including modules, flashcards, notes, quiz questions, and progress. This action cannot be undone!\n\nAre you absolutely sure?")) {
+        if (
+          !confirm(
+            "⚠️ WARNING: This will delete ALL your data including modules, flashcards, notes, quiz questions, and progress. This action cannot be undone!\n\nAre you absolutely sure?"
+          )
+        ) {
           return;
         }
 
@@ -281,10 +303,9 @@
       }
 
       // Load data on page load
-      document.addEventListener("DOMContentLoaded", function() {
+      document.addEventListener("DOMContentLoaded", function () {
         loadProgressData();
       });
     </script>
   </body>
 </html>
-

@@ -15,7 +15,7 @@
       <header>
         <h1><i class="fas fa-graduation-cap"></i> Medical Study Buddy</h1>
         <p>Your Ultimate Companion for Medical Exam Success</p>
-        <p>Made with <i class="fas fa-heart"></i> by S</p>
+        <p>Made with <i class="fas fa-heart"></i> for M</p>
       </header>
 
       <!-- Navigation Tabs -->
@@ -79,22 +79,71 @@
                 id="color1"
                 checked
               />
-              <label for="color1" class="color-option" style="background: #667eea"></label>
-              
-              <input type="radio" name="moduleColor" value="#10b981" id="color2" />
-              <label for="color2" class="color-option" style="background: #10b981"></label>
-              
-              <input type="radio" name="moduleColor" value="#f59e0b" id="color3" />
-              <label for="color3" class="color-option" style="background: #f59e0b"></label>
-              
-              <input type="radio" name="moduleColor" value="#ef4444" id="color4" />
-              <label for="color4" class="color-option" style="background: #ef4444"></label>
-              
-              <input type="radio" name="moduleColor" value="#8b5cf6" id="color5" />
-              <label for="color5" class="color-option" style="background: #8b5cf6"></label>
-              
-              <input type="radio" name="moduleColor" value="#ec4899" id="color6" />
-              <label for="color6" class="color-option" style="background: #ec4899"></label>
+              <label
+                for="color1"
+                class="color-option"
+                style="background: #667eea"
+              ></label>
+
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#10b981"
+                id="color2"
+              />
+              <label
+                for="color2"
+                class="color-option"
+                style="background: #10b981"
+              ></label>
+
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#f59e0b"
+                id="color3"
+              />
+              <label
+                for="color3"
+                class="color-option"
+                style="background: #f59e0b"
+              ></label>
+
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#ef4444"
+                id="color4"
+              />
+              <label
+                for="color4"
+                class="color-option"
+                style="background: #ef4444"
+              ></label>
+
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#8b5cf6"
+                id="color5"
+              />
+              <label
+                for="color5"
+                class="color-option"
+                style="background: #8b5cf6"
+              ></label>
+
+              <input
+                type="radio"
+                name="moduleColor"
+                value="#ec4899"
+                id="color6"
+              />
+              <label
+                for="color6"
+                class="color-option"
+                style="background: #ec4899"
+              ></label>
             </div>
           </div>
           <div class="form-actions">
@@ -113,17 +162,22 @@
             <i class="fas fa-book-medical"></i>
             <h3>No Modules Yet</h3>
             <p>
-              Create your first study module to organize your medical exam preparation
+              Create your first study module to organize your medical exam
+              preparation
             </p>
           </div>
         </div>
 
         <!-- Module Detail View (Hidden by default) -->
         <div id="moduleDetail" class="module-detail" style="display: none">
-          <button class="btn btn-warning" onclick="backToModules()" style="margin-bottom: 20px">
+          <button
+            class="btn btn-warning"
+            onclick="backToModules()"
+            style="margin-bottom: 20px"
+          >
             <i class="fas fa-arrow-left"></i> Back to Modules
           </button>
-          
+
           <div class="module-detail-header">
             <div>
               <h2 id="detailModuleName"></h2>
@@ -135,7 +189,10 @@
           </div>
 
           <div class="content-tabs">
-            <button class="content-tab active" onclick="showContentTab('notes')">
+            <button
+              class="content-tab active"
+              onclick="showContentTab('notes')"
+            >
               <i class="fas fa-sticky-note"></i> Notes
             </button>
             <button class="content-tab" onclick="showContentTab('flashcards')">
@@ -168,7 +225,9 @@
               </button>
             </div>
             <div id="flashcardsList" class="flashcards-list">
-              <p class="empty-message">No flashcards yet. Create your first flashcard!</p>
+              <p class="empty-message">
+                No flashcards yet. Create your first flashcard!
+              </p>
             </div>
           </div>
 
@@ -181,7 +240,9 @@
               </button>
             </div>
             <div id="quizList" class="quiz-list">
-              <p class="empty-message">No quiz questions yet. Add your first question!</p>
+              <p class="empty-message">
+                No quiz questions yet. Add your first question!
+              </p>
             </div>
           </div>
         </div>
@@ -189,7 +250,8 @@
 
       <footer>
         <p>
-          Study Smart, Not Just Hard
+          Made with <i class="fas fa-heart"></i> by S | Study Smart, Not Just
+          Hard
         </p>
       </footer>
     </div>
@@ -202,4 +264,3 @@
     </script>
   </body>
 </html>
-
