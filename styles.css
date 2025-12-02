@@ -352,7 +352,11 @@ header .fa-heart {
 /* Responsive Design */
 @media (max-width: 768px) {
   .header-image {
-    display: none;
+    position: static;
+    display: block;
+    width: 80px;
+    margin: 0 auto 10px auto;
+    transform: none;
   }
 
   header h1 {
@@ -374,6 +378,35 @@ header .fa-heart {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+}
+
+/* iPhone 14 Pro and similar (390-430px width) */
+@media (max-width: 430px) {
+  .header-image {
+    width: 70px;
+    margin-bottom: 8px;
+  }
+
+  header h1 {
+    font-size: 1.5rem;
+  }
+
+  header p {
+    font-size: 0.85rem;
+  }
+
+  .nav-tab {
+    padding: 8px 10px;
+    font-size: 0.75rem;
+  }
+
+  .nav-tab i {
+    font-size: 1rem;
+  }
+
+  .content-section {
+    padding: 15px;
   }
 }
 
@@ -441,7 +474,17 @@ footer i {
 @media (max-width: 768px) {
   .character-left,
   .character-right {
-    display: none;
+    width: 50px;
+    bottom: 5px;
+    opacity: 0.7;
+  }
+
+  .character-left {
+    left: 5px;
+  }
+
+  .character-right {
+    right: 5px;
   }
 }
 
