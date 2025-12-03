@@ -14,7 +14,6 @@ function loadStats() {
   const timeElement = document.getElementById("totalStudyTime");
   const flashcardsElement = document.getElementById("totalFlashcards");
   const modulesElement = document.getElementById("modulesCompleted");
-  const streakElement = document.getElementById("sessionStreak");
 
   if (timeElement) {
     const hours = Math.floor(stats.totalStudyTime / 60);
@@ -30,11 +29,12 @@ function loadStats() {
     modulesElement.textContent = modules.length;
   }
 
-  if (streakElement) {
+  const totalSessionsElement = document.getElementById("totalSessions");
+  if (totalSessionsElement) {
     const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
-      currentStreak: 0,
+      totalSessions: 0,
     };
-    streakElement.textContent = timerStats.currentStreak || 0;
+    totalSessionsElement.textContent = timerStats.totalSessions || 0;
   }
 }
 

@@ -114,17 +114,17 @@
 
           <div class="timer-stats">
             <div class="timer-stat-item">
+              <i class="fas fa-trophy"></i>
+              <div>
+                <strong id="totalSessions">0</strong>
+                <span>Total Sessions</span>
+              </div>
+            </div>
+            <div class="timer-stat-item">
               <i class="fas fa-check-circle"></i>
               <div>
                 <strong id="sessionsCompleted">0</strong>
                 <span>Sessions Today</span>
-              </div>
-            </div>
-            <div class="timer-stat-item">
-              <i class="fas fa-fire"></i>
-              <div>
-                <strong id="currentStreak">0</strong>
-                <span>Current Streak</span>
               </div>
             </div>
             <div class="timer-stat-item">
@@ -248,7 +248,7 @@
           sessionsToday: 0,
           totalTimeToday: 0,
           lastDate: new Date().toDateString(),
-          currentStreak: 0,
+          totalSessions: 0,
         };
 
         // Reset if it's a new day
@@ -267,14 +267,14 @@
 
       // Update stats display
       function updateStatsDisplay() {
+        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
+          totalSessions: 0,
+        };
+
+        document.getElementById("totalSessions").textContent =
+          timerStats.totalSessions || 0;
         document.getElementById("sessionsCompleted").textContent =
           sessionsCount;
-
-        const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
-          currentStreak: 0,
-        };
-        document.getElementById("currentStreak").textContent =
-          timerStats.currentStreak || 0;
 
         const hours = Math.floor(totalTimeToday / 60);
         const minutes = totalTimeToday % 60;
@@ -452,13 +452,13 @@
           const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
             sessionsToday: 0,
             totalTimeToday: 0,
-            currentStreak: 0,
+            totalSessions: 0,
             lastDate: new Date().toDateString(),
           };
 
           timerStats.sessionsToday = sessionsCount;
           timerStats.totalTimeToday = totalTimeToday;
-          timerStats.currentStreak = sessionsCount;
+          timerStats.totalSessions = (timerStats.totalSessions || 0) + 1;
           localStorage.setItem("timerStats", JSON.stringify(timerStats));
 
           // Update main stats

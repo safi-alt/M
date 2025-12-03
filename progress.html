@@ -73,9 +73,9 @@
               <p>Total Flashcards</p>
             </div>
             <div class="stat-card">
-              <i class="fas fa-fire"></i>
-              <h3 id="studyStreak">0</h3>
-              <p>Session Streak</p>
+              <i class="fas fa-trophy"></i>
+              <h3 id="totalSessions">0</h3>
+              <p>Total Sessions</p>
             </div>
           </div>
         </div>
@@ -105,8 +105,10 @@
               <div class="history-value" id="todayStudyTime">0h 0m</div>
             </div>
             <div class="history-item">
-              <div class="history-label">Current Streak</div>
-              <div class="history-value" id="currentStreak">0 sessions</div>
+              <div class="history-label">Total Sessions</div>
+              <div class="history-value" id="historyTotalSessions">
+                0 sessions
+              </div>
             </div>
           </div>
         </div>
@@ -126,9 +128,9 @@
               <p>Create 50 flashcards</p>
             </div>
             <div class="achievement-badge" id="badge3">
-              <i class="fas fa-fire"></i>
-              <h4>7-Day Streak</h4>
-              <p>Study for 7 consecutive days</p>
+              <i class="fas fa-trophy"></i>
+              <h4>10 Sessions</h4>
+              <p>Complete 10 study sessions</p>
             </div>
             <div class="achievement-badge" id="badge4">
               <i class="fas fa-clock"></i>
@@ -173,7 +175,7 @@
         const timerStats = JSON.parse(localStorage.getItem("timerStats")) || {
           sessionsToday: 0,
           totalTimeToday: 0,
-          currentStreak: 0,
+          totalSessions: 0,
           lastDate: new Date().toDateString(),
         };
 
@@ -186,8 +188,8 @@
         document.getElementById("totalModules").textContent = modules.length;
         document.getElementById("totalCards").textContent =
           stats.totalFlashcards;
-        document.getElementById("studyStreak").textContent =
-          timerStats.currentStreak;
+        document.getElementById("totalSessions").textContent =
+          timerStats.totalSessions || 0;
 
         // Update timer history
         document.getElementById("todaySessions").textContent =
@@ -197,9 +199,9 @@
         document.getElementById(
           "todayStudyTime"
         ).textContent = `${todayHours}h ${todayMinutes}m`;
-        document.getElementById(
-          "currentStreak"
-        ).textContent = `${timerStats.currentStreak} sessions`;
+        document.getElementById("historyTotalSessions").textContent = `${
+          timerStats.totalSessions || 0
+        } sessions`;
 
         // Load module breakdown
         loadModuleBreakdown(modules);
@@ -265,8 +267,8 @@
           document.getElementById("badge2").classList.add("unlocked");
         }
 
-        // Badge 3: 7-Day Streak
-        if (timerStats.currentStreak >= 7) {
+        // Badge 3: 10 Sessions Completed
+        if (timerStats.totalSessions >= 10) {
           document.getElementById("badge3").classList.add("unlocked");
         }
 
@@ -281,7 +283,7 @@
         }
 
         // Badge 6: 100 Sessions
-        if (timerStats.sessionsToday >= 100) {
+        if (timerStats.totalSessions >= 100) {
           document.getElementById("badge6").classList.add("unlocked");
         }
       }
