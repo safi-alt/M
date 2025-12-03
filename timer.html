@@ -222,6 +222,10 @@
       let sessionsCount = 0;
       let totalTimeToday = 0;
 
+      // Timestamp-based timing (survives screen sleep)
+      let timerEndTime = null; // When the timer should end
+      let pausedTimeRemaining = null; // Time remaining when paused
+
       // Timer durations (in seconds)
       let durations = {
         focus: 25 * 60,
@@ -308,9 +312,18 @@
         document.getElementById("startBtn").style.display = "none";
         document.getElementById("pauseBtn").style.display = "inline-flex";
 
+        // Set the end time based on current remaining time
+        timerEndTime = Date.now() + timeRemaining * 1000;
+
+        // Save timer state to localStorage (survives page refresh too)
+        saveTimerState();
+
         timerInterval = setInterval(() => {
+          // Calculate remaining time from end time (survives screen sleep)
+          const now = Date.now();
+          timeRemaining = Math.max(0, Math.round((timerEndTime - now) / 1000));
+
           if (timeRemaining > 0) {
-            timeRemaining--;
             updateDisplay();
           } else {
             completeSession();
@@ -322,8 +335,12 @@
       function pauseTimer() {
         isRunning = false;
         clearInterval(timerInterval);
+        timerEndTime = null;
         document.getElementById("startBtn").style.display = "inline-flex";
         document.getElementById("pauseBtn").style.display = "none";
+
+        // Clear saved timer state
+        localStorage.removeItem("activeTimer");
       }
 
       // Reset timer
@@ -332,6 +349,88 @@
         timeRemaining = durations[currentMode];
         updateDisplay();
       }
+
+      // Save timer state to localStorage
+      function saveTimerState() {
+        if (isRunning && timerEndTime) {
+          localStorage.setItem(
+            "activeTimer",
+            JSON.stringify({
+              endTime: timerEndTime,
+              mode: currentMode,
+            })
+          );
+        }
+      }
+
+      // Restore timer state (for page refresh or returning to page)
+      function restoreTimerState() {
+        const saved = localStorage.getItem("activeTimer");
+        if (saved) {
+          const state = JSON.parse(saved);
+          const now = Date.now();
+          const remaining = Math.round((state.endTime - now) / 1000);
+
+          if (remaining > 0) {
+            // Timer was running and still has time
+            currentMode = state.mode;
+            timeRemaining = remaining;
+            timerEndTime = state.endTime;
+
+            // Update mode buttons
+            document.querySelectorAll(".timer-mode-btn").forEach((btn) => {
+              btn.classList.remove("active");
+              if (btn.getAttribute("data-mode") === currentMode) {
+                btn.classList.add("active");
+              }
+            });
+
+            // Auto-resume the timer
+            isRunning = true;
+            document.getElementById("startBtn").style.display = "none";
+            document.getElementById("pauseBtn").style.display = "inline-flex";
+
+            timerInterval = setInterval(() => {
+              const now = Date.now();
+              timeRemaining = Math.max(
+                0,
+                Math.round((timerEndTime - now) / 1000)
+              );
+
+              if (timeRemaining > 0) {
+                updateDisplay();
+              } else {
+                completeSession();
+              }
+            }, 1000);
+
+            updateDisplay();
+          } else {
+            // Timer expired while away - complete the session
+            currentMode = state.mode;
+            localStorage.removeItem("activeTimer");
+            completeSession();
+          }
+        }
+      }
+
+      // Handle page visibility change (when user returns to tab/app)
+      document.addEventListener("visibilitychange", function () {
+        if (
+          document.visibilityState === "visible" &&
+          isRunning &&
+          timerEndTime
+        ) {
+          // Recalculate remaining time when page becomes visible
+          const now = Date.now();
+          timeRemaining = Math.max(0, Math.round((timerEndTime - now) / 1000));
+          updateDisplay();
+
+          if (timeRemaining <= 0) {
+            completeSession();
+          }
+        }
+      });
 
       // Complete session
       function completeSession() {
@@ -499,6 +598,9 @@
       // Initialize on page load
       loadTimerData();
       updateDisplay();
+
+      // Restore any running timer (survives page refresh/screen sleep)
+      restoreTimerState();
     </script>
   </body>
 </html>
