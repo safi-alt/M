@@ -89,7 +89,6 @@ function loadModules() {
         <div class="module-stats">
           <span><i class="fas fa-sticky-note"></i> ${module.notes.length} Notes</span>
           <span><i class="fas fa-layer-group"></i> ${module.flashcards.length} Cards</span>
-          <span><i class="fas fa-question-circle"></i> ${module.quizQuestions.length} Quiz</span>
         </div>
       </div>
     `
@@ -118,7 +117,6 @@ function openModule(moduleId) {
   // Load content
   loadModuleNotes(module);
   loadModuleFlashcards(module);
-  loadModuleQuiz(module);
 }
 
 // Back to Modules List
@@ -212,7 +210,10 @@ function loadModuleFlashcards(module) {
           <h4>Card ${index + 1}</h4>
           <div class="flashcard-actions">
             ${card.difficulty ? `<span class="difficulty-tag difficulty-${card.difficulty}">${card.difficulty}</span>` : ''}
-            <button class="btn-icon" onclick="deleteFlashcard(${index})">
+            <button class="btn-icon btn-edit" onclick="editFlashcard(${index})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-delete" onclick="deleteFlashcard(${index})">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -227,43 +228,6 @@ function loadModuleFlashcards(module) {
     .join("");
 }
 
-// Load Module Quiz
-function loadModuleQuiz(module) {
-  const quizList = document.getElementById("quizList");
-  if (module.quizQuestions.length === 0) {
-    quizList.innerHTML =
-      '<p class="empty-message">No quiz questions yet. Add your first question!</p>';
-    return;
-  }
-
-  quizList.innerHTML = module.quizQuestions
-    .map(
-      (q, index) => `
-      <div class="quiz-item">
-        <div class="quiz-header">
-          <h4>Question ${index + 1}</h4>
-          <button class="btn-icon" onclick="deleteQuizQuestion(${index})">
-            <i class="fas fa-trash"></i>
-          </button>
-        </div>
-        <p class="quiz-question">${q.question}</p>
-        <div class="quiz-options">
-          ${q.options
-            .map(
-              (opt, i) => `
-            <div class="quiz-option ${i === q.correctAnswer ? "correct" : ""}">
-              ${String.fromCharCode(65 + i)}. ${opt}
-              ${i === q.correctAnswer ? '<i class="fas fa-check-circle"></i>' : ""}
-            </div>
-          `
-            )
-            .join("")}
-        </div>
-      </div>
-    `
-    )
-    .join("");
-}
 
 // Note Modal Variables
 let editingNoteIndex = null;
@@ -335,48 +299,43 @@ function closeNoteModal() {
   editingNoteIndex = null;
 }
 
-// Add Flashcard
+// Flashcard Modal Variables
+let editingFlashcardIndex = null;
+
+// Add Flashcard - Show Modal
 function addFlashcard() {
-  const question = prompt("Enter flashcard question:");
-  if (!question) return;
+  editingFlashcardIndex = null;
+  document.getElementById("flashcardModalTitle").innerHTML = '<i class="fas fa-layer-group"></i> Add Flashcard';
+  document.getElementById("flashcardQuestionInput").value = "";
+  document.getElementById("flashcardAnswerInput").value = "";
+  document.getElementById("flashcardModal").style.display = "flex";
+}
 
-  const answer = prompt("Enter flashcard answer:");
-  if (!answer) return;
-
+// Edit Flashcard - Show Modal with existing data
+function editFlashcard(index) {
   const modules = getModules();
   const module = modules.find((m) => m.id === currentModuleId);
-
-  if (module) {
-    module.flashcards.push({
-      question: question,
-      answer: answer,
-      difficulty: null,
-      createdAt: new Date().toISOString(),
-    });
-    saveModules(modules);
-    updateStats();
-    loadModuleFlashcards(module);
-    loadModules();
+  
+  if (module && module.flashcards[index]) {
+    editingFlashcardIndex = index;
+    document.getElementById("flashcardModalTitle").innerHTML = '<i class="fas fa-edit"></i> Edit Flashcard';
+    document.getElementById("flashcardQuestionInput").value = module.flashcards[index].question;
+    document.getElementById("flashcardAnswerInput").value = module.flashcards[index].answer;
+    document.getElementById("flashcardModal").style.display = "flex";
   }
 }
 
-// Add Quiz Question
-function addQuizQuestion() {
-  const question = prompt("Enter the question:");
-  if (!question) return;
-
-  const optA = prompt("Option A:");
-  if (!optA) return;
-  const optB = prompt("Option B:");
-  if (!optB) return;
-  const optC = prompt("Option C:");
-  if (!optC) return;
-  const optD = prompt("Option D:");
-  if (!optD) return;
-
-  const correct = prompt("Correct answer (A/B/C/D):").toUpperCase();
-  if (!["A", "B", "C", "D"].includes(correct)) {
-    alert("Invalid answer!");
+// Save Flashcard from Modal
+function saveFlashcardFromModal() {
+  const question = document.getElementById("flashcardQuestionInput").value.trim();
+  const answer = document.getElementById("flashcardAnswerInput").value.trim();
+  
+  if (!question) {
+    alert("Please enter a question!");
+    return;
+  }
+  if (!answer) {
+    alert("Please enter an answer!");
     return;
   }
 
@@ -384,17 +343,34 @@ function addQuizQuestion() {
   const module = modules.find((m) => m.id === currentModuleId);
 
   if (module) {
-    module.quizQuestions.push({
-      question: question,
-      options: [optA, optB, optC, optD],
-      correctAnswer: correct.charCodeAt(0) - 65,
-      createdAt: new Date().toISOString(),
-    });
+    if (editingFlashcardIndex !== null) {
+      // Update existing flashcard
+      module.flashcards[editingFlashcardIndex].question = question;
+      module.flashcards[editingFlashcardIndex].answer = answer;
+      module.flashcards[editingFlashcardIndex].updatedAt = new Date().toISOString();
+    } else {
+      // Add new flashcard
+      module.flashcards.push({
+        question: question,
+        answer: answer,
+        difficulty: null,
+        createdAt: new Date().toISOString(),
+      });
+    }
     saveModules(modules);
-    loadModuleQuiz(module);
+    updateStats();
+    loadModuleFlashcards(module);
     loadModules();
+    closeFlashcardModal();
   }
 }
+
+// Close Flashcard Modal
+function closeFlashcardModal() {
+  document.getElementById("flashcardModal").style.display = "none";
+  editingFlashcardIndex = null;
+}
+
 
 // Delete Functions
 function deleteNote(index) {
@@ -426,17 +402,5 @@ function deleteFlashcard(index) {
   }
 }
 
-function deleteQuizQuestion(index) {
-  if (!confirm("Delete this question?")) return;
 
-  const modules = getModules();
-  const module = modules.find((m) => m.id === currentModuleId);
-
-  if (module) {
-    module.quizQuestions.splice(index, 1);
-    saveModules(modules);
-    loadModuleQuiz(module);
-    loadModules();
-  }
-}
 
