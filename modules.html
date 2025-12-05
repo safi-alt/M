@@ -211,9 +211,18 @@
           <div id="notesContent" class="module-content active">
             <div class="content-header">
               <h3>Study Notes</h3>
-              <button class="btn btn-primary" onclick="addNote()">
-                <i class="fas fa-plus"></i> Add Note
-              </button>
+              <div class="content-header-actions">
+                <button
+                  class="btn btn-secondary filter-btn"
+                  id="filterNotesBtn"
+                  onclick="toggleNotesFilter()"
+                >
+                  <i class="fas fa-star"></i> Show Starred
+                </button>
+                <button class="btn btn-primary" onclick="addNote()">
+                  <i class="fas fa-plus"></i> Add Note
+                </button>
+              </div>
             </div>
             <div id="notesList" class="notes-list">
               <p class="empty-message">No notes yet. Add your first note!</p>
@@ -224,9 +233,18 @@
           <div id="flashcardsContent" class="module-content">
             <div class="content-header">
               <h3>Flashcards</h3>
-              <button class="btn btn-primary" onclick="addFlashcard()">
-                <i class="fas fa-plus"></i> Add Flashcard
-              </button>
+              <div class="content-header-actions">
+                <button
+                  class="btn btn-secondary filter-btn"
+                  id="filterFlashcardsBtn"
+                  onclick="toggleFlashcardsFilter()"
+                >
+                  <i class="fas fa-star"></i> Show Starred
+                </button>
+                <button class="btn btn-primary" onclick="addFlashcard()">
+                  <i class="fas fa-plus"></i> Add Flashcard
+                </button>
+              </div>
             </div>
             <div id="flashcardsList" class="flashcards-list">
               <p class="empty-message">

@@ -578,6 +578,40 @@ footer i {
   background: rgba(239, 68, 68, 0.1);
 }
 
+/* Star Button */
+.btn-icon.btn-star {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.btn-icon.btn-star:hover {
+  color: #fbbf24;
+}
+
+.btn-icon.btn-star.starred {
+  color: #fbbf24;
+}
+
+/* Content Header Actions */
+.content-header-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.filter-btn {
+  font-size: 0.85rem;
+  padding: 8px 12px;
+}
+
+.filter-btn.active {
+  background: #fbbf24;
+  color: #333;
+}
+
+.filter-btn.active i {
+  color: #333;
+}
+
 /* Character Decorations */
 .character-left,
 .character-right {

@@ -1,6 +1,8 @@
 // ===== MODULE MANAGEMENT FUNCTIONS =====
 
 let currentModuleId = null;
+let showStarredNotesOnly = false;
+let showStarredFlashcardsOnly = false;
 
 // Initialize modules page
 document.addEventListener("DOMContentLoaded", function () {
@@ -124,6 +126,22 @@ function backToModules() {
   document.getElementById("moduleDetail").style.display = "none";
   document.getElementById("modulesList").style.display = "grid";
   currentModuleId = null;
+  
+  // Reset filters
+  showStarredNotesOnly = false;
+  showStarredFlashcardsOnly = false;
+  
+  // Reset filter button states
+  const notesBtn = document.getElementById("filterNotesBtn");
+  const flashcardsBtn = document.getElementById("filterFlashcardsBtn");
+  if (notesBtn) {
+    notesBtn.classList.remove("active");
+    notesBtn.innerHTML = '<i class="fas fa-star"></i> Show Starred';
+  }
+  if (flashcardsBtn) {
+    flashcardsBtn.classList.remove("active");
+    flashcardsBtn.innerHTML = '<i class="fas fa-star"></i> Show Starred';
+  }
 }
 
 // Delete Current Module
@@ -164,23 +182,42 @@ function showContentTab(tab) {
 // Load Module Notes
 function loadModuleNotes(module) {
   const notesList = document.getElementById("notesList");
+  
+  // Filter notes if starred filter is active
+  let notesToShow = module.notes;
+  if (showStarredNotesOnly) {
+    notesToShow = module.notes.filter((note, index) => note.starred);
+  }
+  
   if (module.notes.length === 0) {
     notesList.innerHTML =
       '<p class="empty-message">No notes yet. Add your first note!</p>';
     return;
   }
+  
+  if (notesToShow.length === 0 && showStarredNotesOnly) {
+    notesList.innerHTML =
+      '<p class="empty-message">No starred notes. Star some notes to see them here!</p>';
+    return;
+  }
 
   notesList.innerHTML = module.notes
-    .map(
-      (note, index) => `
+    .map((note, index) => {
+      // Skip non-starred if filter is active
+      if (showStarredNotesOnly && !note.starred) return '';
+      
+      return `
       <div class="note-item">
         <div class="note-header">
           <h4>${note.title}</h4>
           <div class="note-actions">
-            <button class="btn-icon btn-edit" onclick="editNote(${index})">
+            <button class="btn-icon btn-star ${note.starred ? 'starred' : ''}" onclick="toggleNoteStar(${index})" title="${note.starred ? 'Unstar' : 'Star'}">
+              <i class="fas fa-star"></i>
+            </button>
+            <button class="btn-icon btn-edit" onclick="editNote(${index})" title="Edit">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-icon btn-delete" onclick="deleteNote(${index})">
+            <button class="btn-icon btn-delete" onclick="deleteNote(${index})" title="Delete">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -188,32 +225,82 @@ function loadModuleNotes(module) {
         <p>${note.content}</p>
         <small>${new Date(note.createdAt).toLocaleDateString()}</small>
       </div>
-    `
-    )
+    `;
+    })
     .join("");
+}
+
+// Toggle Note Star
+function toggleNoteStar(index) {
+  const modules = getModules();
+  const module = modules.find((m) => m.id === currentModuleId);
+
+  if (module && module.notes[index]) {
+    module.notes[index].starred = !module.notes[index].starred;
+    saveModules(modules);
+    loadModuleNotes(module);
+  }
+}
+
+// Toggle Notes Filter
+function toggleNotesFilter() {
+  showStarredNotesOnly = !showStarredNotesOnly;
+  const btn = document.getElementById("filterNotesBtn");
+  
+  if (showStarredNotesOnly) {
+    btn.classList.add("active");
+    btn.innerHTML = '<i class="fas fa-star"></i> Show All';
+  } else {
+    btn.classList.remove("active");
+    btn.innerHTML = '<i class="fas fa-star"></i> Show Starred';
+  }
+  
+  const module = getModuleById(currentModuleId);
+  if (module) {
+    loadModuleNotes(module);
+  }
 }
 
 // Load Module Flashcards
 function loadModuleFlashcards(module) {
   const flashcardsList = document.getElementById("flashcardsList");
+  
+  // Filter flashcards if starred filter is active
+  let cardsToShow = module.flashcards;
+  if (showStarredFlashcardsOnly) {
+    cardsToShow = module.flashcards.filter((card) => card.starred);
+  }
+  
   if (module.flashcards.length === 0) {
     flashcardsList.innerHTML =
       '<p class="empty-message">No flashcards yet. Create your first flashcard!</p>';
     return;
   }
+  
+  if (cardsToShow.length === 0 && showStarredFlashcardsOnly) {
+    flashcardsList.innerHTML =
+      '<p class="empty-message">No starred flashcards. Star some cards to see them here!</p>';
+    return;
+  }
 
   flashcardsList.innerHTML = module.flashcards
-    .map(
-      (card, index) => `
+    .map((card, index) => {
+      // Skip non-starred if filter is active
+      if (showStarredFlashcardsOnly && !card.starred) return '';
+      
+      return `
       <div class="flashcard-item">
         <div class="flashcard-header">
           <h4>Card ${index + 1}</h4>
           <div class="flashcard-actions">
             ${card.difficulty ? `<span class="difficulty-tag difficulty-${card.difficulty}">${card.difficulty}</span>` : ''}
-            <button class="btn-icon btn-edit" onclick="editFlashcard(${index})">
+            <button class="btn-icon btn-star ${card.starred ? 'starred' : ''}" onclick="toggleFlashcardStar(${index})" title="${card.starred ? 'Unstar' : 'Star'}">
+              <i class="fas fa-star"></i>
+            </button>
+            <button class="btn-icon btn-edit" onclick="editFlashcard(${index})" title="Edit">
               <i class="fas fa-edit"></i>
             </button>
-            <button class="btn-icon btn-delete" onclick="deleteFlashcard(${index})">
+            <button class="btn-icon btn-delete" onclick="deleteFlashcard(${index})" title="Delete">
               <i class="fas fa-trash"></i>
             </button>
           </div>
@@ -223,9 +310,40 @@ function loadModuleFlashcards(module) {
           <strong>A:</strong> ${card.answer}
         </div>
       </div>
-    `
-    )
+    `;
+    })
     .join("");
+}
+
+// Toggle Flashcard Star
+function toggleFlashcardStar(index) {
+  const modules = getModules();
+  const module = modules.find((m) => m.id === currentModuleId);
+
+  if (module && module.flashcards[index]) {
+    module.flashcards[index].starred = !module.flashcards[index].starred;
+    saveModules(modules);
+    loadModuleFlashcards(module);
+  }
+}
+
+// Toggle Flashcards Filter
+function toggleFlashcardsFilter() {
+  showStarredFlashcardsOnly = !showStarredFlashcardsOnly;
+  const btn = document.getElementById("filterFlashcardsBtn");
+  
+  if (showStarredFlashcardsOnly) {
+    btn.classList.add("active");
+    btn.innerHTML = '<i class="fas fa-star"></i> Show All';
+  } else {
+    btn.classList.remove("active");
+    btn.innerHTML = '<i class="fas fa-star"></i> Show Starred';
+  }
+  
+  const module = getModuleById(currentModuleId);
+  if (module) {
+    loadModuleFlashcards(module);
+  }
 }
 
 
