@@ -1,0 +1,119 @@
+{
+  "medStudyModules": [
+    {
+      "id": "1764796915146",
+      "name": "Surgery",
+      "description": "This module is for surgery practice",
+      "color": "#667eea",
+      "createdAt": "2025-12-03T21:21:55.146Z",
+      "notes": [
+        {
+          "title": "This is my first Note",
+          "content": "This content is for Surgery :)❤️",
+          "createdAt": "2025-12-05T20:15:41.546Z",
+          "updatedAt": "2025-12-05T20:19:09.290Z",
+          "starred": false
+        },
+        {
+          "title": "This is Note 2",
+          "content": "Note 2 content",
+          "createdAt": "2025-12-05T20:36:39.735Z",
+          "starred": true
+        }
+      ],
+      "flashcards": [
+        {
+          "question": "This is a what?",
+          "answer": "This is a vein",
+          "difficulty": "Difficult",
+          "createdAt": "2025-12-05T20:24:30.540Z",
+          "updatedAt": "2025-12-05T20:29:30.308Z",
+          "starred": true
+        },
+        {
+          "question": "Flash Card",
+          "answer": "THIS IS FLASH 2",
+          "difficulty": "Okay",
+          "createdAt": "2025-12-05T20:37:07.084Z",
+          "starred": false
+        }
+      ],
+      "quizQuestions": []
+    },
+    {
+      "id": "1764796990276",
+      "name": "Anatomy",
+      "description": "This module is for Anatomy",
+      "color": "#10b981",
+      "createdAt": "2025-12-03T21:23:10.276Z",
+      "notes": [],
+      "flashcards": [
+        {
+          "question": "Yo what up?",
+          "answer": "I am cool Dawg",
+          "difficulty": "Difficult",
+          "createdAt": "2025-12-05T20:25:56.233Z"
+        }
+      ],
+      "quizQuestions": []
+    },
+    {
+      "id": "1764966471057",
+      "name": "Gynaecology",
+      "description": "This is gynie",
+      "color": "#f59e0b",
+      "createdAt": "2025-12-05T20:27:51.057Z",
+      "notes": [],
+      "flashcards": [],
+      "quizQuestions": []
+    },
+    {
+      "id": "1764966512975",
+      "name": "Peads",
+      "description": "This is for peads",
+      "color": "#ef4444",
+      "createdAt": "2025-12-05T20:28:32.975Z",
+      "notes": [],
+      "flashcards": [],
+      "quizQuestions": []
+    },
+    {
+      "id": "1764966525197",
+      "name": "Physio",
+      "description": "This is physio",
+      "color": "#8b5cf6",
+      "createdAt": "2025-12-05T20:28:45.197Z",
+      "notes": [],
+      "flashcards": [
+        {
+          "question": "flashing",
+          "answer": "me armano",
+          "difficulty": "Okay",
+          "createdAt": "2025-12-05T21:09:07.422Z"
+        }
+      ],
+      "quizQuestions": []
+    }
+  ],
+  "medStudyStats": {
+    "totalStudyTime": 59,
+    "totalFlashcards": 4,
+    "quizzesTaken": 0,
+    "totalScore": 0
+  },
+  "timerStats": {
+    "sessionsToday": 9,
+    "totalTimeToday": 9,
+    "totalSessions": 11,
+    "lastDate": "Fri Dec 05 2025"
+  },
+  "timerSettings": {
+    "focusDuration": 1,
+    "shortBreakDuration": 1,
+    "longBreakDuration": 1,
+    "autoStart": false,
+    "soundEnabled": true
+  },
+  "exportDate": "2025-12-05T22:11:00.722Z",
+  "version": "1.0"
+}

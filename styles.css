@@ -666,6 +666,28 @@ footer i {
   opacity: 1;
 }
 
+/* Data Management Actions */
+.data-actions {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.data-actions .btn {
+  flex: 1;
+  min-width: 150px;
+}
+
+@media (max-width: 430px) {
+  .data-actions {
+    flex-direction: column;
+  }
+
+  .data-actions .btn {
+    width: 100%;
+  }
+}
+
 /* Confetti Animation for Unlocked Achievements */
 .achievement-badge.unlocked {
   position: relative;

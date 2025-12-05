@@ -113,6 +113,30 @@
           </div>
         </div>
 
+        <!-- Data Management -->
+        <div class="progress-section">
+          <h3><i class="fas fa-database"></i> Data Management</h3>
+          <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 15px">
+            Export your data to use on another device or browser, or import
+            previously exported data.
+          </p>
+          <div class="data-actions">
+            <button class="btn btn-primary" onclick="exportData()">
+              <i class="fas fa-download"></i> Export Data
+            </button>
+            <button class="btn btn-secondary" onclick="triggerImport()">
+              <i class="fas fa-upload"></i> Import Data
+            </button>
+            <input
+              type="file"
+              id="importFile"
+              accept=".json"
+              style="display: none"
+              onchange="importData(event)"
+            />
+          </div>
+        </div>
+
         <!-- Achievement Badges -->
         <div class="progress-section">
           <h3><i class="fas fa-trophy"></i> Achievements</h3>
@@ -339,6 +363,114 @@
         if (timerStats.totalSessions >= 100) {
           document.getElementById("badge11").classList.add("unlocked");
         }
+      }
+
+      // Export all data to JSON file
+      function exportData() {
+        const data = {
+          medStudyModules:
+            JSON.parse(localStorage.getItem("medStudyModules")) || [],
+          medStudyStats:
+            JSON.parse(localStorage.getItem("medStudyStats")) || {},
+          timerStats: JSON.parse(localStorage.getItem("timerStats")) || {},
+          timerSettings:
+            JSON.parse(localStorage.getItem("timerSettings")) || {},
+          exportDate: new Date().toISOString(),
+          version: "1.0",
+        };
+
+        const blob = new Blob([JSON.stringify(data, null, 2)], {
+          type: "application/json",
+        });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `study-buddy-backup-${
+          new Date().toISOString().split("T")[0]
+        }.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        alert(
+          "✅ Data exported successfully!\n\nSave this file to import on another device or browser."
+        );
+      }
+
+      // Trigger file input for import
+      function triggerImport() {
+        document.getElementById("importFile").click();
+      }
+
+      // Import data from JSON file
+      function importData(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          try {
+            const data = JSON.parse(e.target.result);
+
+            // Validate the data structure
+            if (!data.medStudyModules || !data.version) {
+              alert(
+                "❌ Invalid backup file! Please select a valid Study Buddy backup."
+              );
+              return;
+            }
+
+            // Confirm before overwriting
+            if (
+              !confirm(
+                "⚠️ This will replace all your current data with the imported data.\n\nAre you sure you want to continue?"
+              )
+            ) {
+              return;
+            }
+
+            // Import the data
+            if (data.medStudyModules) {
+              localStorage.setItem(
+                "medStudyModules",
+                JSON.stringify(data.medStudyModules)
+              );
+            }
+            if (data.medStudyStats) {
+              localStorage.setItem(
+                "medStudyStats",
+                JSON.stringify(data.medStudyStats)
+              );
+            }
+            if (data.timerStats) {
+              localStorage.setItem(
+                "timerStats",
+                JSON.stringify(data.timerStats)
+              );
+            }
+            if (data.timerSettings) {
+              localStorage.setItem(
+                "timerSettings",
+                JSON.stringify(data.timerSettings)
+              );
+            }
+
+            alert(
+              "✅ Data imported successfully!\n\nThe page will now reload."
+            );
+            location.reload();
+          } catch (error) {
+            alert(
+              "❌ Error reading file! Please make sure it's a valid JSON backup file."
+            );
+            console.error("Import error:", error);
+          }
+        };
+        reader.readAsText(file);
+
+        // Reset file input
+        event.target.value = "";
       }
 
       function resetAllData() {
