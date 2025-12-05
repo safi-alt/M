@@ -666,6 +666,76 @@ footer i {
   opacity: 1;
 }
 
+/* Confetti Animation for Unlocked Achievements */
+.achievement-badge.unlocked {
+  position: relative;
+  overflow: visible;
+}
+
+.achievement-badge.unlocked::before {
+  content: "🎉";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.achievement-badge.unlocked:hover::before {
+  opacity: 1;
+  top: -25px;
+  animation: confettiBounce 0.5s ease infinite;
+}
+
+@keyframes confettiBounce {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-10px) rotate(10deg);
+  }
+}
+
+/* Multiple confetti particles */
+.achievement-badge.unlocked::after {
+  content: "✨🎊✨";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.achievement-badge.unlocked:hover::after {
+  animation: confettiExplode 0.6s ease-out forwards;
+}
+
+@keyframes confettiExplode {
+  0% {
+    opacity: 1;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
 /* Flashcard Review Header */
 .review-header {
   display: flex;
