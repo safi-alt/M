@@ -133,9 +133,9 @@
               <p>Complete 10 study sessions</p>
             </div>
             <div class="achievement-badge" id="badge4">
-              <i class="fas fa-clock"></i>
+              <i class="fas fa-medal"></i>
               <h4>Dedicated Learner</h4>
-              <p>Study for 10 hours total</p>
+              <p>Complete 50 study sessions</p>
             </div>
             <div class="achievement-badge" id="badge5">
               <i class="fas fa-graduation-cap"></i>
@@ -272,8 +272,8 @@
           document.getElementById("badge3").classList.add("unlocked");
         }
 
-        // Badge 4: 10 Hours Total
-        if (stats.totalStudyTime >= 600) {
+        // Badge 4: 50 Sessions
+        if (timerStats.totalSessions >= 50) {
           document.getElementById("badge4").classList.add("unlocked");
         }
 
