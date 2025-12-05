@@ -52,13 +52,11 @@
             <select
               id="moduleFilter"
               class="form-input"
-              style="display: inline-block; width: auto; margin-right: 10px"
+              style="display: inline-block; width: auto"
+              onchange="filterFlashcards()"
             >
               <option value="all">All Modules</option>
             </select>
-            <button class="btn btn-primary" onclick="startReview()">
-              <i class="fas fa-play"></i> Start Review
-            </button>
           </div>
         </div>
 
@@ -234,6 +232,37 @@
           .join("");
       }
 
+      // Filter flashcards when dropdown changes
+      function filterFlashcards() {
+        const filterValue = document.getElementById("moduleFilter").value;
+
+        // Filter flashcards based on selection
+        filteredFlashcards =
+          filterValue === "all"
+            ? allFlashcards
+            : allFlashcards.filter((card) => card.moduleId === filterValue);
+
+        // Check if we're in review mode
+        const reviewVisible =
+          document.getElementById("flashcardReview").style.display === "block";
+
+        if (reviewVisible) {
+          // If in review mode, restart review with new filtered cards
+          if (filteredFlashcards.length === 0) {
+            alert("No flashcards in this module!");
+            document.getElementById("moduleFilter").value = "all";
+            filteredFlashcards = allFlashcards;
+            return;
+          }
+          currentCardIndex = 0;
+          isFlipped = false;
+          loadCard();
+        } else {
+          // If in list view, update the display
+          displayFlashcards();
+        }
+      }
+
       // Review Mode Functions
       function startReview() {
         if (filteredFlashcards.length === 0) {
@@ -358,12 +387,9 @@
         }
       }
 
-      // Event listener for module filter
+      // Initialize on page load
       document.addEventListener("DOMContentLoaded", function () {
         loadAllFlashcards();
-        document
-          .getElementById("moduleFilter")
-          .addEventListener("change", displayFlashcards);
       });
     </script>
   </body>
