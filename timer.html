@@ -209,6 +209,22 @@
       </footer>
     </div>
 
+    <!-- Custom Notification Modal -->
+    <div
+      id="notificationModal"
+      class="notification-modal"
+      style="display: none"
+    >
+      <div class="notification-content">
+        <div class="notification-icon" id="notificationIcon">🎉</div>
+        <h2 id="notificationTitle">Session Complete!</h2>
+        <p id="notificationMessage">Time for a break!</p>
+        <button class="btn btn-primary btn-lg" onclick="dismissNotification()">
+          <i class="fas fa-check"></i> OK
+        </button>
+      </div>
+    </div>
+
     <script src="app.js"></script>
     <script>
       // Set active navigation
@@ -436,13 +452,10 @@
       function completeSession() {
         pauseTimer();
 
-        // Play sound if enabled
+        // Get settings
         const settings = JSON.parse(localStorage.getItem("timerSettings")) || {
           soundEnabled: true,
         };
-        if (settings.soundEnabled !== false) {
-          playNotificationSound();
-        }
 
         if (currentMode === "focus") {
           // Update stats
@@ -475,22 +488,61 @@
 
           updateStatsDisplay();
 
-          alert("🎉 Focus session complete! Time for a break!");
+          // Send system notification (works on lock screen)
+          sendSystemNotification(
+            "🎉 Focus Session Complete!",
+            "Great job! Time for a break. You've completed " +
+              sessionsCount +
+              " sessions today."
+          );
 
-          // Auto-switch to break
-          if (sessionsCount % 4 === 0) {
-            switchMode("long");
-          } else {
-            switchMode("short");
+          // Start repeating sound if enabled
+          if (settings.soundEnabled !== false) {
+            startNotificationSound();
           }
-        } else {
-          alert("Break time over! Ready for another focus session?");
-          switchMode("focus");
-        }
 
-        // Auto-start if enabled
-        if (settings.autoStart) {
-          setTimeout(startTimer, 2000);
+          // Determine which break to switch to
+          const nextMode = sessionsCount % 4 === 0 ? "long" : "short";
+          const breakType = nextMode === "long" ? "long" : "short";
+
+          // Show custom notification (non-blocking, sound keeps playing)
+          showNotification(
+            "🎉",
+            "Focus Session Complete!",
+            "Great job! Time for a " + breakType + " break.",
+            function () {
+              switchMode(nextMode);
+              // Auto-start if enabled
+              if (settings.autoStart) {
+                setTimeout(startTimer, 2000);
+              }
+            }
+          );
+        } else {
+          // Send system notification for break end
+          sendSystemNotification(
+            "⏰ Break Time Over!",
+            "Ready for another focus session? Let's get back to studying!"
+          );
+
+          // Start repeating sound if enabled
+          if (settings.soundEnabled !== false) {
+            startNotificationSound();
+          }
+
+          // Show custom notification (non-blocking, sound keeps playing)
+          showNotification(
+            "⏰",
+            "Break Time Over!",
+            "Ready for another focus session? Let's go!",
+            function () {
+              switchMode("focus");
+              // Auto-start if enabled
+              if (settings.autoStart) {
+                setTimeout(startTimer, 2000);
+              }
+            }
+          );
         }
       }
 
@@ -568,8 +620,11 @@
         alert("Settings saved!");
       }
 
-      // Play notification sound (simple beep using Web Audio API)
-      function playNotificationSound() {
+      // Sound interval for repeating beep
+      let soundInterval = null;
+
+      // Play a single beep
+      function playBeep() {
         try {
           const audioContext = new (window.AudioContext ||
             window.webkitAudioContext)();
@@ -582,18 +637,83 @@
           oscillator.frequency.value = 800;
           oscillator.type = "sine";
 
-          gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+          gainNode.gain.setValueAtTime(0.5, audioContext.currentTime);
           gainNode.gain.exponentialRampToValueAtTime(
             0.01,
-            audioContext.currentTime + 0.5
+            audioContext.currentTime + 0.3
           );
 
           oscillator.start(audioContext.currentTime);
-          oscillator.stop(audioContext.currentTime + 0.5);
+          oscillator.stop(audioContext.currentTime + 0.3);
         } catch (e) {
           console.log("Audio not supported");
         }
       }
+
+      // Start repeating notification sound
+      function startNotificationSound() {
+        playBeep(); // Play immediately
+        soundInterval = setInterval(playBeep, 1000); // Repeat every second
+      }
+
+      // Stop the repeating sound
+      function stopNotificationSound() {
+        if (soundInterval) {
+          clearInterval(soundInterval);
+          soundInterval = null;
+        }
+      }
+
+      // Pending action after notification is dismissed
+      let pendingAction = null;
+
+      // Show custom notification modal
+      function showNotification(icon, title, message, action) {
+        document.getElementById("notificationIcon").textContent = icon;
+        document.getElementById("notificationTitle").textContent = title;
+        document.getElementById("notificationMessage").textContent = message;
+        document.getElementById("notificationModal").style.display = "flex";
+        pendingAction = action;
+      }
+
+      // Dismiss notification and execute pending action
+      function dismissNotification() {
+        stopNotificationSound();
+        document.getElementById("notificationModal").style.display = "none";
+
+        if (pendingAction) {
+          pendingAction();
+          pendingAction = null;
+        }
+      }
+
+      // Request notification permission on page load
+      function requestNotificationPermission() {
+        if ("Notification" in window && Notification.permission === "default") {
+          Notification.requestPermission();
+        }
+      }
+
+      // Send system notification (shows on lock screen)
+      function sendSystemNotification(title, body) {
+        if ("Notification" in window && Notification.permission === "granted") {
+          const notification = new Notification(title, {
+            body: body,
+            icon: "Nick_Wilde_and_Judy_Hopps.webp",
+            tag: "timer-notification",
+            requireInteraction: true, // Keeps notification until user interacts
+            vibrate: [200, 100, 200, 100, 200], // Vibration pattern for mobile
+          });
+
+          notification.onclick = function () {
+            window.focus();
+            notification.close();
+          };
+        }
+      }
+
+      // Request permission when page loads
+      requestNotificationPermission();
 
       // Initialize on page load
       loadTimerData();
