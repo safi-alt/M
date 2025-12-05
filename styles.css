@@ -507,6 +507,77 @@ footer i {
   font-size: 1.1rem;
 }
 
+/* Modal Content (for forms) */
+.modal-content {
+  background: rgba(255, 255, 255, 0.95);
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.3s ease;
+}
+
+.modal-content h2 {
+  color: #333;
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-content .form-group {
+  margin-bottom: 20px;
+}
+
+.modal-content .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: 500;
+}
+
+.modal-content textarea.form-input {
+  resize: vertical;
+  min-height: 120px;
+  line-height: 1.5;
+}
+
+.modal-content .form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.modal-content .form-actions .btn {
+  flex: 1;
+}
+
+/* Note Actions */
+.note-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon.btn-edit {
+  color: #3b82f6;
+}
+
+.btn-icon.btn-edit:hover {
+  color: #2563eb;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.btn-icon.btn-delete {
+  color: #ef4444;
+}
+
+.btn-icon.btn-delete:hover {
+  color: #dc2626;
+  background: rgba(239, 68, 68, 0.1);
+}
+
 /* Character Decorations */
 .character-left,
 .character-right {

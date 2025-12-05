@@ -178,9 +178,14 @@ function loadModuleNotes(module) {
       <div class="note-item">
         <div class="note-header">
           <h4>${note.title}</h4>
-          <button class="btn-icon" onclick="deleteNote(${index})">
-            <i class="fas fa-trash"></i>
-          </button>
+          <div class="note-actions">
+            <button class="btn-icon btn-edit" onclick="editNote(${index})">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-icon btn-delete" onclick="deleteNote(${index})">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </div>
         <p>${note.content}</p>
         <small>${new Date(note.createdAt).toLocaleDateString()}</small>
@@ -260,27 +265,74 @@ function loadModuleQuiz(module) {
     .join("");
 }
 
-// Add Note
-function addNote() {
-  const title = prompt("Enter note title:");
-  if (!title) return;
+// Note Modal Variables
+let editingNoteIndex = null;
 
-  const content = prompt("Enter note content:");
-  if (!content) return;
+// Add Note - Show Modal
+function addNote() {
+  editingNoteIndex = null;
+  document.getElementById("noteModalTitle").innerHTML = '<i class="fas fa-sticky-note"></i> Add Note';
+  document.getElementById("noteTitleInput").value = "";
+  document.getElementById("noteContentInput").value = "";
+  document.getElementById("noteModal").style.display = "flex";
+}
+
+// Edit Note - Show Modal with existing data
+function editNote(index) {
+  const modules = getModules();
+  const module = modules.find((m) => m.id === currentModuleId);
+  
+  if (module && module.notes[index]) {
+    editingNoteIndex = index;
+    document.getElementById("noteModalTitle").innerHTML = '<i class="fas fa-edit"></i> Edit Note';
+    document.getElementById("noteTitleInput").value = module.notes[index].title;
+    document.getElementById("noteContentInput").value = module.notes[index].content;
+    document.getElementById("noteModal").style.display = "flex";
+  }
+}
+
+// Save Note from Modal
+function saveNoteFromModal() {
+  const title = document.getElementById("noteTitleInput").value.trim();
+  const content = document.getElementById("noteContentInput").value.trim();
+  
+  if (!title) {
+    alert("Please enter a title!");
+    return;
+  }
+  if (!content) {
+    alert("Please enter note content!");
+    return;
+  }
 
   const modules = getModules();
   const module = modules.find((m) => m.id === currentModuleId);
 
   if (module) {
-    module.notes.push({
-      title: title,
-      content: content,
-      createdAt: new Date().toISOString(),
-    });
+    if (editingNoteIndex !== null) {
+      // Update existing note
+      module.notes[editingNoteIndex].title = title;
+      module.notes[editingNoteIndex].content = content;
+      module.notes[editingNoteIndex].updatedAt = new Date().toISOString();
+    } else {
+      // Add new note
+      module.notes.push({
+        title: title,
+        content: content,
+        createdAt: new Date().toISOString(),
+      });
+    }
     saveModules(modules);
     loadModuleNotes(module);
     loadModules();
+    closeNoteModal();
   }
+}
+
+// Close Note Modal
+function closeNoteModal() {
+  document.getElementById("noteModal").style.display = "none";
+  editingNoteIndex = null;
 }
 
 // Add Flashcard
