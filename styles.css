@@ -650,6 +650,22 @@ footer i {
   transform: scale(1.1);
 }
 
+/* Module Card Click Hint */
+.module-card::after {
+  content: "Click to open";
+  position: absolute;
+  bottom: 10px;
+  right: 15px;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.6);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.module-card:hover::after {
+  opacity: 1;
+}
+
 /* Character Decorations */
 .character-left,
 .character-right {
