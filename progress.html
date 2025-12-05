@@ -117,35 +117,67 @@
         <div class="progress-section">
           <h3><i class="fas fa-trophy"></i> Achievements</h3>
           <div class="achievements-grid">
+            <!-- Module Achievements -->
             <div class="achievement-badge" id="badge1">
               <i class="fas fa-star"></i>
               <h4>First Module</h4>
-              <p>Create your first study module</p>
+              <p>Create 1 module</p>
             </div>
             <div class="achievement-badge" id="badge2">
+              <i class="fas fa-graduation-cap"></i>
+              <h4>Module Pro</h4>
+              <p>Create 3 modules</p>
+            </div>
+
+            <!-- Note Achievements -->
+            <div class="achievement-badge" id="badge3">
+              <i class="fas fa-sticky-note"></i>
+              <h4>Note Taker</h4>
+              <p>Create 10 notes</p>
+            </div>
+            <div class="achievement-badge" id="badge4">
+              <i class="fas fa-book"></i>
+              <h4>Note Master</h4>
+              <p>Create 50 notes</p>
+            </div>
+            <div class="achievement-badge" id="badge5">
+              <i class="fas fa-scroll"></i>
+              <h4>Note Legend</h4>
+              <p>Create 100 notes</p>
+            </div>
+
+            <!-- Flashcard Achievements -->
+            <div class="achievement-badge" id="badge6">
+              <i class="fas fa-clone"></i>
+              <h4>Card Creator</h4>
+              <p>Create 10 flashcards</p>
+            </div>
+            <div class="achievement-badge" id="badge7">
               <i class="fas fa-layer-group"></i>
               <h4>Flashcard Master</h4>
               <p>Create 50 flashcards</p>
             </div>
-            <div class="achievement-badge" id="badge3">
+            <div class="achievement-badge" id="badge8">
+              <i class="fas fa-id-card"></i>
+              <h4>Flashcard Legend</h4>
+              <p>Create 100 flashcards</p>
+            </div>
+
+            <!-- Session Achievements -->
+            <div class="achievement-badge" id="badge9">
               <i class="fas fa-trophy"></i>
               <h4>10 Sessions</h4>
-              <p>Complete 10 study sessions</p>
+              <p>Complete 10 sessions</p>
             </div>
-            <div class="achievement-badge" id="badge4">
+            <div class="achievement-badge" id="badge10">
               <i class="fas fa-medal"></i>
               <h4>Dedicated Learner</h4>
-              <p>Complete 50 study sessions</p>
+              <p>Complete 50 sessions</p>
             </div>
-            <div class="achievement-badge" id="badge5">
-              <i class="fas fa-graduation-cap"></i>
-              <h4>Module Pro</h4>
-              <p>Create 5 modules</p>
-            </div>
-            <div class="achievement-badge" id="badge6">
+            <div class="achievement-badge" id="badge11">
               <i class="fas fa-brain"></i>
               <h4>Pomodoro Champion</h4>
-              <p>Complete 100 study sessions</p>
+              <p>Complete 100 sessions</p>
             </div>
           </div>
         </div>
@@ -253,34 +285,59 @@
       }
 
       function checkAchievements(modules, stats, timerStats) {
-        // Badge 1: First Module
+        // Calculate totals
+        const totalNotes = modules.reduce((sum, m) => sum + m.notes.length, 0);
+
+        // Module Achievements
+        // Badge 1: 1 Module
         if (modules.length >= 1) {
           document.getElementById("badge1").classList.add("unlocked");
         }
-
-        // Badge 2: 50 Flashcards
-        if (stats.totalFlashcards >= 50) {
+        // Badge 2: 3 Modules
+        if (modules.length >= 3) {
           document.getElementById("badge2").classList.add("unlocked");
         }
 
-        // Badge 3: 10 Sessions Completed
-        if (timerStats.totalSessions >= 10) {
+        // Note Achievements
+        // Badge 3: 10 Notes
+        if (totalNotes >= 10) {
           document.getElementById("badge3").classList.add("unlocked");
         }
-
-        // Badge 4: 50 Sessions
-        if (timerStats.totalSessions >= 50) {
+        // Badge 4: 50 Notes
+        if (totalNotes >= 50) {
           document.getElementById("badge4").classList.add("unlocked");
         }
-
-        // Badge 5: 5 Modules
-        if (modules.length >= 5) {
+        // Badge 5: 100 Notes
+        if (totalNotes >= 100) {
           document.getElementById("badge5").classList.add("unlocked");
         }
 
-        // Badge 6: 100 Sessions
-        if (timerStats.totalSessions >= 100) {
+        // Flashcard Achievements
+        // Badge 6: 10 Flashcards
+        if (stats.totalFlashcards >= 10) {
           document.getElementById("badge6").classList.add("unlocked");
+        }
+        // Badge 7: 50 Flashcards
+        if (stats.totalFlashcards >= 50) {
+          document.getElementById("badge7").classList.add("unlocked");
+        }
+        // Badge 8: 100 Flashcards
+        if (stats.totalFlashcards >= 100) {
+          document.getElementById("badge8").classList.add("unlocked");
+        }
+
+        // Session Achievements
+        // Badge 9: 10 Sessions
+        if (timerStats.totalSessions >= 10) {
+          document.getElementById("badge9").classList.add("unlocked");
+        }
+        // Badge 10: 50 Sessions
+        if (timerStats.totalSessions >= 50) {
+          document.getElementById("badge10").classList.add("unlocked");
+        }
+        // Badge 11: 100 Sessions
+        if (timerStats.totalSessions >= 100) {
+          document.getElementById("badge11").classList.add("unlocked");
         }
       }
 
