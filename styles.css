@@ -666,6 +666,19 @@ footer i {
   opacity: 1;
 }
 
+/* Flashcard Review Header */
+.review-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.current-difficulty {
+  display: flex;
+  align-items: center;
+}
+
 /* Character Decorations */
 .character-left,
 .character-right {

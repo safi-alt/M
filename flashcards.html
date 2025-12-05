@@ -84,8 +84,11 @@
           </button>
 
           <div class="flashcard-review-container">
-            <div class="review-progress">
-              <span id="reviewProgress">0 / 0</span>
+            <div class="review-header">
+              <div class="review-progress">
+                <span id="reviewProgress">0 / 0</span>
+              </div>
+              <div id="currentDifficulty" class="current-difficulty"></div>
             </div>
 
             <div class="flashcard-flip-card" onclick="flipCard()">
@@ -272,6 +275,16 @@
           currentCardIndex + 1
         } / ${filteredFlashcards.length}`;
 
+        // Show current difficulty if set
+        const difficultyEl = document.getElementById("currentDifficulty");
+        if (card.difficulty) {
+          difficultyEl.innerHTML = `<span class="difficulty-tag difficulty-${card.difficulty}">${card.difficulty}</span>`;
+          difficultyEl.style.display = "block";
+        } else {
+          difficultyEl.innerHTML = "";
+          difficultyEl.style.display = "none";
+        }
+
         // Reset flip
         isFlipped = false;
         document.getElementById("flipCard").classList.remove("flipped");
@@ -308,17 +321,14 @@
 
       function markDifficult() {
         saveDifficulty("Difficult");
-        nextCard();
       }
 
       function markOkay() {
         saveDifficulty("Okay");
-        nextCard();
       }
 
       function markEasy() {
         saveDifficulty("Easy");
-        nextCard();
       }
 
       function saveDifficulty(difficulty) {
@@ -336,6 +346,14 @@
           if (flashcard) {
             flashcard.difficulty = difficulty;
             saveModules(modules);
+
+            // Update local array so it shows immediately
+            filteredFlashcards[currentCardIndex].difficulty = difficulty;
+
+            // Update the difficulty display
+            const difficultyEl = document.getElementById("currentDifficulty");
+            difficultyEl.innerHTML = `<span class="difficulty-tag difficulty-${difficulty}">${difficulty}</span>`;
+            difficultyEl.style.display = "block";
           }
         }
       }
