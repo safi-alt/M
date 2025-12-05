@@ -22,6 +22,11 @@ function cancelAddModule() {
   // Clear form
   document.getElementById("moduleName").value = "";
   document.getElementById("moduleDescription").value = "";
+  // Reset editing state
+  editingModuleId = null;
+  // Reset form title and button
+  document.querySelector("#addModuleForm h3").innerHTML = '<i class="fas fa-plus-circle"></i> Create New Module';
+  document.querySelector("#addModuleForm .btn-success").innerHTML = '<i class="fas fa-save"></i> Save Module';
 }
 
 // Save Module
@@ -82,15 +87,25 @@ function loadModules() {
   modulesList.innerHTML = modules
     .map(
       (module) => `
-      <div class="module-card" style="border-left: 5px solid ${module.color}" onclick="openModule('${module.id}')">
-        <div class="module-icon" style="background: ${module.color}">
-          <i class="fas fa-book-medical"></i>
+      <div class="module-card" style="border-left: 5px solid ${module.color}">
+        <div class="module-card-actions">
+          <button class="btn-icon btn-edit" onclick="event.stopPropagation(); editModule('${module.id}')" title="Edit Module">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-icon btn-delete" onclick="event.stopPropagation(); deleteModule('${module.id}')" title="Delete Module">
+            <i class="fas fa-trash"></i>
+          </button>
         </div>
-        <h3>${module.name}</h3>
-        <p>${module.description || "No description"}</p>
-        <div class="module-stats">
-          <span><i class="fas fa-sticky-note"></i> ${module.notes.length} Notes</span>
-          <span><i class="fas fa-layer-group"></i> ${module.flashcards.length} Cards</span>
+        <div class="module-card-content" onclick="openModule('${module.id}')">
+          <div class="module-icon" style="background: ${module.color}">
+            <i class="fas fa-book-medical"></i>
+          </div>
+          <h3>${module.name}</h3>
+          <p>${module.description || "No description"}</p>
+          <div class="module-stats">
+            <span><i class="fas fa-sticky-note"></i> ${module.notes.length} Notes</span>
+            <span><i class="fas fa-layer-group"></i> ${module.flashcards.length} Cards</span>
+          </div>
         </div>
       </div>
     `
@@ -144,10 +159,14 @@ function backToModules() {
   }
 }
 
-// Delete Current Module
+// Delete Current Module (from detail view)
 function deleteCurrentModule() {
   if (!currentModuleId) return;
+  deleteModule(currentModuleId);
+}
 
+// Delete Module by ID
+function deleteModule(moduleId) {
   if (
     !confirm(
       "Are you sure you want to delete this module? All content will be lost!"
@@ -157,11 +176,90 @@ function deleteCurrentModule() {
   }
 
   let modules = getModules();
-  modules = modules.filter((m) => m.id !== currentModuleId);
+  modules = modules.filter((m) => m.id !== moduleId);
   saveModules(modules);
   updateStats();
-  backToModules();
+  
+  // If we're in detail view, go back
+  if (currentModuleId === moduleId) {
+    backToModules();
+  }
+  
   loadModules();
+}
+
+// Edit Module Variables
+let editingModuleId = null;
+
+// Edit Module - Show Modal
+function editModule(moduleId) {
+  const module = getModuleById(moduleId);
+  if (!module) return;
+  
+  editingModuleId = moduleId;
+  
+  // Populate the add module form with existing data
+  document.getElementById("moduleName").value = module.name;
+  document.getElementById("moduleDescription").value = module.description || "";
+  
+  // Select the correct color
+  const colorRadios = document.querySelectorAll('input[name="moduleColor"]');
+  colorRadios.forEach(radio => {
+    radio.checked = radio.value === module.color;
+  });
+  
+  // Change form title and button
+  document.querySelector("#addModuleForm h3").innerHTML = '<i class="fas fa-edit"></i> Edit Module';
+  document.querySelector("#addModuleForm .btn-success").innerHTML = '<i class="fas fa-save"></i> Update Module';
+  
+  // Show form
+  document.getElementById("addModuleForm").style.display = "block";
+  document.getElementById("modulesList").style.display = "none";
+}
+
+// Update saveModule to handle editing
+const originalSaveModule = saveModule;
+saveModule = function() {
+  const name = document.getElementById("moduleName").value.trim();
+  if (!name) {
+    alert("Please enter a module name!");
+    return;
+  }
+
+  const description = document.getElementById("moduleDescription").value.trim();
+  const color = document.querySelector('input[name="moduleColor"]:checked').value;
+
+  const modules = getModules();
+
+  if (editingModuleId) {
+    // Update existing module
+    const moduleIndex = modules.findIndex(m => m.id === editingModuleId);
+    if (moduleIndex !== -1) {
+      modules[moduleIndex].name = name;
+      modules[moduleIndex].description = description;
+      modules[moduleIndex].color = color;
+      modules[moduleIndex].updatedAt = new Date().toISOString();
+    }
+    editingModuleId = null;
+  } else {
+    // Create new module
+    const newModule = {
+      id: Date.now().toString(),
+      name: name,
+      description: description,
+      color: color,
+      createdAt: new Date().toISOString(),
+      notes: [],
+      flashcards: [],
+      quizQuestions: [],
+    };
+    modules.push(newModule);
+  }
+
+  saveModules(modules);
+  updateStats();
+  loadModules();
+  cancelAddModule();
 }
 
 // Content Tab Switching
