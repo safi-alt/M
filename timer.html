@@ -752,16 +752,32 @@
       // Request permission when page loads
       requestNotificationPermission();
 
-      // Clear input on focus so user can type new value directly
+      // Handle input focus for easier value replacement
       document
         .querySelectorAll('.form-input[type="number"]')
         .forEach((input) => {
           let originalValue = "";
+          let hasTyped = false;
 
           input.addEventListener("focus", function () {
-            originalValue = this.value; // Store original value
-            this.value = ""; // Clear input
-            this.placeholder = originalValue; // Show as placeholder
+            originalValue = this.value;
+            hasTyped = false;
+            // Don't clear - just mark for replacement on first keypress
+          });
+
+          input.addEventListener("keydown", function (e) {
+            // On first keypress (not backspace/delete/arrows), clear and replace
+            if (
+              !hasTyped &&
+              e.key !== "Backspace" &&
+              e.key !== "Delete" &&
+              e.key !== "ArrowLeft" &&
+              e.key !== "ArrowRight" &&
+              e.key !== "Tab"
+            ) {
+              this.value = "";
+              hasTyped = true;
+            }
           });
 
           input.addEventListener("blur", function () {
@@ -769,7 +785,7 @@
             if (this.value === "" || this.value === null) {
               this.value = originalValue;
             }
-            this.placeholder = ""; // Clear placeholder
+            hasTyped = false;
           });
         });
 
